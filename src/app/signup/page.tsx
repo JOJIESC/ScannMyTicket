@@ -65,6 +65,9 @@ function signup() {
           <input className={inputStyles} type="text" placeholder="Número de telefono" name="phone_number" onChange={handleChange} required/>
         <button type="submit" className="text-black bg-customGreen rounded-lg w-[315px] h-16">Sign up</button>
         </form>
+        <p className="mt-4 text-sm text-center text-black">
+                    ¿Ya tienes una cuenta? <a href="/login" className="font-bold hover:text-customGreen">Inicia Sesión</a>
+                </p>
       </div>
       <div className="flex justify-center items-center flex-col">
         <h1 className="w-full flex justify-center font-bold text-5xl pb-16">Registrate</h1>
