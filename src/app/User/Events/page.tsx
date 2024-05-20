@@ -1,12 +1,9 @@
-import NavbarUser from "@/components/molecules/NavbarUser/NavbarUser"
 import EventCard from "@/components/molecules/EventCard/EventCard"
 import axios from "axios"
-import { Key } from "react"
 
 async function loadEvents(){
     //verificar el puerto del servidor 
     const {data} = await axios.get('http://localhost:3000/api/events/')
-    console.log(data)
     return data
 }
 
