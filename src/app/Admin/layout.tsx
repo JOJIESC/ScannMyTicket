@@ -7,12 +7,12 @@ function LayoutAdmin({
     children: React.ReactNode;
   }>) {
   return (
-    <>
-      <SideBarAdmin/>
-      <main>
+<main className='flex'>
+    <SideBarAdmin />
+    <div>
       {children}
-      </main>
-    </>
+    </div>
+</main>
   )
 }
 
