@@ -1,16 +1,16 @@
 import React from 'react'
 import Avatar from '@/components/atoms/Avatar/Avatar'
 
-function Account() {
+function EditUser() {
   return (
     <div className='flex justify-around items-center h-dvh p-16'>
       <section className='w-2/4'>
-      <h1 className='font-bold text-5xl mb-20'>Account settings</h1>
+      <h1 className='font-bold text-5xl mb-20'>Edit User</h1>
 
       <div >
         <label className='font-bold' htmlFor="">First_name</label>
         <div className='flex gap-4'>
-            <input className='w-full bg-customGray h-12 rounded-md  mb-4 p-2' type="text" name="first_name" id="first_name" value='jorge' placeholder='first name'/>
+            <input className='w-full bg-customGray h-12 rounded-md  mb-4 p-2' type="text" name="first_name" id="first_name"  placeholder='first name'/>
             <input className='w-full bg-customGray h-12 rounded-md  mb-4 p-2' type="text" name='last_name' id='last_name' placeholder='last_name' />
         </div>
       </div>
@@ -29,4 +29,4 @@ function Account() {
   )
 }
 
-export default Account
+export default EditUser
