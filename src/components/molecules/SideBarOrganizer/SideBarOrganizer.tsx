@@ -39,7 +39,7 @@ function SideBarOrganizer() {
 
 const pathname = usePathname()
   return (
-<nav className='w-80 h-dvh px-5 py-10 flex flex-col justify-between'>
+<aside className='w-80 h-dvh px-5 py-10 flex flex-col justify-between flex-shrink-0'>
             {/* Scann my Ticket title and icon navbar */}
             <div className='flex items-center gap-2 mb-8'>
                 <svg height="48px" viewBox="0 -960 960 960" width="48px"
@@ -73,7 +73,7 @@ const pathname = usePathname()
                     </span>
                 </button>
             </div>
-        </nav>
+        </aside>
   )
 }
 

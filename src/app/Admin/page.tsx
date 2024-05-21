@@ -2,11 +2,8 @@ import React from 'react'
 
 function Admin() {
   return (
-    <div className='flex'>
-      <main>
+    <div >
       <h1>hola</h1>
-      </main>
-
     </div>
   )
 }
