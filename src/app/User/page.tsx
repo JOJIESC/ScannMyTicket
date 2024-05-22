@@ -18,6 +18,7 @@ const Dashboard = () => {
         console.log(response)
     }
 
+    //esta funcion toma los datos del usuario y setea el usuario
     React.useEffect(() => {
         getProfile()
     }, [])
@@ -29,7 +30,7 @@ const Dashboard = () => {
                 <Avatar width={150} />
                 <div>
                     <h1 className='font-bold text-7xl'>Home</h1>
-                    <p className='font-bold'>Bienvenido {JSON.stringify(user.email,null,2)}</p>
+                    <p className='font-bold'>Bienvenido {JSON.stringify(user.username,null,2)}</p>
                 </div>
             </div>
             <div className='flex gap-7'>

@@ -6,11 +6,15 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 
 function Account() {
+
+  //manejar el cierre de sesion
   const router = useRouter()
   const logout = () => {
     const response = axios.post('/api/auth/logout')
     router.push('/login')
   }
+
+  
 
   return (
     <div className='flex justify-around items-center h-dvh p-16'>
