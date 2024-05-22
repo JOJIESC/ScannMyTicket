@@ -12,7 +12,7 @@ function NavbarUser() {
         },
         {
             name: 'Account',
-            href: ''
+            href: '/User/Account'
         },
         {
             name: 'Mis Tickets',

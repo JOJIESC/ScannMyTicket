@@ -10,7 +10,7 @@ function Account() {
       <div >
         <label className='font-bold' htmlFor="">First_name</label>
         <div className='flex gap-4'>
-            <input className='w-full bg-customGray h-12 rounded-md  mb-4 p-2' type="text" name="first_name" id="first_name" value='jorge' placeholder='first name'/>
+            <input className='w-full bg-customGray h-12 rounded-md  mb-4 p-2' type="text" name="first_name" id="first_name"  placeholder='first name'/>
             <input className='w-full bg-customGray h-12 rounded-md  mb-4 p-2' type="text" name='last_name' id='last_name' placeholder='last_name' />
         </div>
       </div>

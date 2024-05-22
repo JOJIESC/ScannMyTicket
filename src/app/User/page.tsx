@@ -1,14 +1,35 @@
+'use client'
+
 import React from 'react';
 import Avatar from '@/components/atoms/Avatar/Avatar';
+import axios from 'axios';
+import { useState } from 'react';
 
 const Dashboard = () => {
+
+    const [user, setuser] = useState({
+        email: "",
+        username: ""
+    })
+
+    const getProfile = async () => {
+        const response = await axios.get('/api/auth/PROFILE')
+        setuser(response.data)
+        console.log(response)
+    }
+
+    React.useEffect(() => {
+        getProfile()
+    }, [])
+
+
     return (
         <main className='py-11 px-36 flex gap-7 flex-col'>
             <div className='flex items-center gap-10 mb-5'>
                 <Avatar width={150} />
                 <div>
                     <h1 className='font-bold text-7xl'>Home</h1>
-                    <p >Bienvenido</p>
+                    <p className='font-bold'>Bienvenido {JSON.stringify(user.email,null,2)}</p>
                 </div>
             </div>
             <div className='flex gap-7'>

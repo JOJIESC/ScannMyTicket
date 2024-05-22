@@ -3,8 +3,11 @@
 import axios from 'axios';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 function login() {
+
+    const router = useRouter();
 
     const [credentials, setcredentials] = useState({
         email: "",
@@ -23,11 +26,16 @@ function login() {
         console.log(credentials);
 
         try {
-            const response = await axios.post('/api/login', credentials);
+            const response = await axios.post('/api/auth/login', credentials);
             console.log(response);
+            //si el status es 200 redirigir a la pagina de usuario
+            if (response.status === 200) {
+                router.push('/User');
+            }
         } catch (error) {
             console.log(error);
         }
+
 
     }
     return (
