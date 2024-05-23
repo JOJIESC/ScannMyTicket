@@ -12,12 +12,14 @@ function signup() {
     first_name: "",
     last_name: "",
     password: "",
-    phone_number: ""
+    phone_number: "",
+    birth_date: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }).split(",")[0],
   
   })
   
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value, event.target.name);
+    
     setadduser({
       ...adduser,
       // los keys de la tabla seran los nombres de los inputs y sus valores seran los correspondientes
@@ -34,7 +36,8 @@ function signup() {
       (form.current as HTMLFormElement).reset()
     }
     //redireccionamos despues de crear al usuario
-   router.push("/User/Events")
+    await axios.post('/api/auth/login', {email: adduser.email_address, password: adduser.password})
+   router.push("/User")
   }
 
   const form = useRef<HTMLFormElement>(null)
@@ -63,6 +66,8 @@ function signup() {
           <input className={inputStyles} type="password" placeholder="Contraseña" name="password" onChange={handleChange} required/>
           <label className={labelStyles} htmlFor="phone_number">Número de telefono</label>
           <input className={inputStyles} type="text" placeholder="Número de telefono" name="phone_number" onChange={handleChange} required/>
+          <label className={labelStyles} htmlFor="birth_date">Fecha de nacimiento</label>
+          <input className={inputStyles} type="date" placeholder="Fecha de nacimiento" name="birth_date" onChange={handleChange} required/>
         <button type="submit" className="text-black bg-customGreen rounded-lg w-[315px] h-16">Sign up</button>
         </form>
         <p className="mt-4 text-sm text-center text-black">

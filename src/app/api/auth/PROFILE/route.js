@@ -14,7 +14,17 @@ export function GET(req,res) {
     try {
         //verificar token
         const user= verify(ScannToken, 'secretkey')
-        return NextResponse.json({ email: user.email, username: user.username})
+        return NextResponse.json({ 
+            email_address: user.email, 
+            username: user.username,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            role: user.role,
+            phone_number: user.phone_number,
+            birth_date: user.birth_date,
+            password: user.password,
+            Id: user.id
+        })
     } catch (err) {
         return NextResponse.json({ message: 'Invalid token' })
     }
