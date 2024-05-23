@@ -23,8 +23,6 @@ export async function POST(req, res) {
 
     try {
         const usuarios = await conn.query('SELECT * FROM users');
-        console.log(usuarios);
-
         try {
             const usuario = usuarios.find(user => user.email_address === email && user.password === password);
             // check if email and password are correct
@@ -32,7 +30,14 @@ export async function POST(req, res) {
                 const token = jwt.sign({
                     exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
                     email: usuario.email_address,
-                    username: usuario.first_name
+                    username: usuario.first_name,
+                    first_name: usuario.first_name,
+                    last_name: usuario.last_name,
+                    role: usuario.role,
+                    phone_number: usuario.phone_number,
+                    birth_date: usuario.birth_date,
+                    password: usuario.password,
+                    id: usuario.id
                 }, 'secretkey')
 
                 const serialized = serialize('ScannToken', token, {
