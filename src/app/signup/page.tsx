@@ -13,7 +13,7 @@ function signup() {
     last_name: "",
     password: "",
     phone_number: "",
-    birth_date: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }).split(",")[0],
+    birth_date: "",
   
   })
   
