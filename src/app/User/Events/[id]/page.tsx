@@ -1,15 +1,28 @@
 import axios from "axios"
-import NavbarUser from "@/components/molecules/NavbarUser/NavbarUser"
 import Image from "next/image"
+import React from "react"
 
 async function loadEvents(eventID: number) {
-    //verificar el puerto del servidor 
+    // traemos los datos del evento segun su id
     const { data } = await axios.get(`http://localhost:3000/api/events/${eventID}`)
     return data
 }
+
+
+// funcion encargada de suscribir al usuario a un evento
+async function Suscribe(){
+    const result = await axios.post(`http://localhost:3000/api/events/suscribe`)
+    console.log(result)
+    return result
+}
+
+
 async function EventPage({ params }: { params: any }) {
+
+    // obtenemos los datos del evento segun su id
     const evento = await loadEvents(params.id)
     console.log(evento)
+
     return (
         <div>
             <main className="flex justify-around w-full h-full py-28 px-20 ">
@@ -36,14 +49,19 @@ async function EventPage({ params }: { params: any }) {
                             </span>
                         </h2>
                         <div>
-
                             <p className="font-bold">Fecha de inicio: </p>
                             <p>{evento.start}</p>
+                            <div>
+                            <p>Hora inicio: {evento.startTime}</p>
                         </div>
-                        <div>
+                        </div>
 
+                        <div>
                             <p className="font-bold">Fecha de conclusión: </p>
                             <p >{evento.end}</p>
+                            <div>
+                            <p>Hora de conclusión: {evento.endTime}</p>
+                            </div>
                         </div>
                     </section>
 
