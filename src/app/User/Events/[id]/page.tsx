@@ -3,6 +3,8 @@ import axios from "axios"
 import Image from "next/image"
 import React, { useEffect, useState } from "react"
 import { Event } from "@/types"
+import { toast } from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css'
 
 async function loadEvents(eventID: number) {
     // traemos los datos del evento segun su id
@@ -22,10 +24,10 @@ async function Suscribe(subscription: any) {
     const result = await axios.post(`/api/events/subscribe`, subscription)
     console.log(result)
     if (result.status === 200) {
-        alert("Te has suscrito al evento")
+        toast.success("Te has suscrito al evento")
     }
     else if(result.status === 201){
-        alert("Ya estás suscrito a este evento")
+        toast.warn("Ya estás suscrito a este evento")
     }
     return result
 }
