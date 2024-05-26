@@ -5,6 +5,8 @@ import Avatar from '@/components/atoms/Avatar/Avatar'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { toast } from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css'
 
 function Account() {
   const [user, setuser] = useState({
@@ -50,7 +52,7 @@ const updateProfile = async () => {
     const response = await axios.put('/api/users/update', user)
     console.log(response.data)
     if (response.status === 200) {
-        alert('Perfil actualizado, los cambios se verán reflejados en el proximo inicio de sesión')
+        toast.success('Perfil actualizado, los cambios se verán reflejados en el proximo inicio de sesión')
     }
 
 
