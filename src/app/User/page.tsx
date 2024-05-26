@@ -34,14 +34,18 @@ const Dashboard = () => {
                 </div>
             </div>
             <div className='flex gap-7'>
-                <a className='bg-[url("/img/dashboardUser/sectionEventos.jpg")] bg-cover w-full h-[300px] rounded-lg text-white relative' href="/User/Events">
+                <a className=' w-full h-72 rounded-lg text-white relative' href="/User/Events">
+                    <div className='bg-[url("/img/dashboardUser/sectionEventos.jpg")] bg-cover w-full h-full relative blur-sm'>
+                    </div>
                     <p className='absolute bottom-5 right-6 font-bold text-4xl flex gap-3 items-center'>
                         <span className="material-symbols-outlined">
                             event_list
                         </span>
                         Eventos</p>
                 </a>
-                <a className='bg-[url("/img/dashboardUser/TusTickets.png")] bg-cover w-full h-[300px] rounded-lg text-white relative' href="/User/MisTickets">
+                <a className='w-full h-72 rounded-lg text-white relative' href="/User/MisTickets">
+                    <div className='bg-[url("/img/dashboardUser/TusTickets.png")] bg-cover w-full h-full relative blur-sm'>
+                    </div>
                     <p className='absolute bottom-5 right-6 font-bold text-4xl flex gap-3 items-center'>
                         <span className="material-symbols-outlined">
                             confirmation_number
@@ -50,7 +54,9 @@ const Dashboard = () => {
                 </a>
             </div>
             <div className='flex'>
-                <a className='bg-[url("/img/dashboardUser/SectionNewEvent.jpg")] bg-cover w-full h-36 rounded-lg text-white relative' href="/User/TuEvento">
+                <a className=' w-full h-36 rounded-lg text-white relative' href="/User/TuEvento">
+                    <div className='bg-[url("/img/dashboardUser/SectionNewEvent.jpg")] bg-cover w-full h-full relative blur-sm'>
+                    </div>
                     <p className='absolute bottom-5 right-6 font-bold text-4xl flex gap-3 items-center'>
                         <span className="material-symbols-outlined">
                             add_circle

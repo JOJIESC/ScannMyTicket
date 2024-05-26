@@ -36,7 +36,7 @@ function NavbarUser() {
                         <Link 
                         href={link.href} 
                         key={link.name} 
-                        className={`font-bold text-black w-auto px-10 py-1 rounded-lg hover:bg-customGray ${pathname === link.href ? ' bg-customGray' : 'bg-transparent'}`}>
+                        className={`font-bold text-black w-auto px-4 py-1 rounded-lg hover:bg-customGray ${pathname === link.href ? ' bg-customGray' : 'bg-transparent'}`}>
                                 {link.name}
                             
                         </Link>
