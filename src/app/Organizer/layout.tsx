@@ -9,7 +9,7 @@ function LayoutOrganizer({
   return (
     <main className='flex'>
       <SideBarOrganizer />
-      <div>
+      <div className='w-full h-full p-5'>
       {children}
       </div>
     </main>
