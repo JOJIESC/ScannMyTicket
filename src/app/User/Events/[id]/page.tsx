@@ -4,25 +4,55 @@ import Image from "next/image"
 import React, { useEffect, useState } from "react"
 import { Event } from "@/types"
 
-
 async function loadEvents(eventID: number) {
     // traemos los datos del evento segun su id
     const { data } = await axios.get(`http://localhost:3000/api/events/${eventID}`)
     return data
 }
 
+const getProfile = async () => {
+    const response = await axios.get('/api/auth/PROFILE')
+    console.log(response)
+    return response
+}
+
 
 // funcion encargada de suscribir al usuario a un evento
-async function Suscribe() {
-    const result = await axios.post(`http://localhost:3000/api/events/suscribe`)
+async function Suscribe(subscription: any) {
+    const result = await axios.post(`/api/events/subscribe`, subscription)
     console.log(result)
+    if (result.status === 200) {
+        alert("Te has suscrito al evento")
+    }
+    else if(result.status === 201){
+        alert("Ya estás suscrito a este evento")
+    }
     return result
 }
 
 
-function EventPage({ params }: { params: any }) {
+function EventPage({ params }: { params: any },response:any) {
 
     const [evento, setEvento] = useState<Event | null>(null);
+    const [userID, setUserID] = useState(null);
+
+    const subscription =  {
+        userID: userID,
+        eventID: params.id
+    }
+    console.log(subscription)
+
+//esta funcion toma los datos del usuario y setea el usuario
+React.useEffect(() => {
+    getProfile()
+    .then((response) => {
+        setUserID(response.data.Id)
+    })
+    .catch((error) => {
+        console.log(error)
+    })
+  }, [])
+  
 
     useEffect(() => {
         const fetchData = async () => {
@@ -94,7 +124,7 @@ function EventPage({ params }: { params: any }) {
 
                     <div className="flex justify-center">
 
-                        <button onClick={Suscribe} className="py-6 px-28 rounded-lg bg-customGreen hover:bg-lime-600">Suscribirse</button>
+                        <button onClick={()=>Suscribe(subscription)} className="py-6 px-28 rounded-lg bg-customGreen hover:bg-lime-600">Suscribirse</button>
                     </div>
                 </div>
             </main>

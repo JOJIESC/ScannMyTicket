@@ -6,7 +6,6 @@ export async function middleware(req) {
     // obtenemos el token de las cookies
     const cookies = req.headers.get('cookie');
     const ScannToken = cookies?.split('; ').find(row => row.startsWith('ScannToken='))?.split('=')[1];
-    //la ruta contiene /User ? 
 
     // si no hay token redirigimos a login
     if (ScannToken === undefined) {
