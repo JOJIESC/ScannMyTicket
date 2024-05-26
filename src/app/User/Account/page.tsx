@@ -75,7 +75,7 @@ const updateProfile = async () => {
         <label className='font-bold' htmlFor="Password">Password</label>
         <input onChange={handleChange} className='w-full bg-customGray h-12 rounded-md  mb-4 p-2' type="text" name="Password" id="Password" defaultValue={user.password}/>
         <label className='font-bold' htmlFor="BirthDate">Birth date</label>
-        <input onChange={handleChange} className='w-full bg-customGray h-12 rounded-md  mb-4 p-2' type="text" name='BirthDate' id='BirthDate' value={user.birth_date} disabled={true}/>
+        <input onChange={handleChange} className='w-full bg-customGray h-12 rounded-md cursor-not-allowed  mb-4 p-2' type="text" name='BirthDate' id='BirthDate' value={user.birth_date} disabled={true}/>
       </section>
       <section className='flex flex-col justify-around'>
         <Avatar width={350} />
