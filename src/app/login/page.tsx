@@ -4,6 +4,8 @@ import axios from 'axios';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css'
 
 function login() {
 
@@ -27,18 +29,36 @@ function login() {
 
         try {
             const response = await axios.post('/api/auth/login', credentials);
+
             console.log(response);
-            //si el status es 200 redirigir a la pagina de usuario
+            //si el status es 200 redirigir a su ruta permitida
             if (response.status === 200) {
-                router.push('/User');
+                const { role } = response.data;
+                console.log(role);
+                switch (role) {
+                    case 'admin':
+                        router.push('/Admin');
+                        break;
+                    case 'operator':
+                        router.push('/Operator');
+                        break;
+                    case 'user':
+                        router.push('/User');
+                        break;
+                    case 'organizer':
+                       router.push('/Organizer');
+                        break;
+                    default:
+                        router.push('/login');
+                        break;
+                }
             }
         } catch (error) {
             console.log(error);
-            alert('Usuario o contraseña incorrectos');
+            toast.warn('Usuario o contraseña incorrectos');
         }
-
-
     }
+
     return (
         <div className="flex flex-col md:flex-row h-screen w-auto bg-white">
             <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-8">
