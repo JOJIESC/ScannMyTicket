@@ -54,7 +54,10 @@ export async function POST(req, res) {
                 })
  
                 // retorna el cookie con el token en el header
-                const response = NextResponse.json({ message: 'login success' });
+                const response = NextResponse.json(
+                    {role: usuario.role},
+                    {status: 200}
+                );
                 response.headers.set('Set-Cookie', serialized);
                 return response;
             }

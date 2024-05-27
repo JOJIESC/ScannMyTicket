@@ -15,7 +15,16 @@ export async function middleware(req) {
     // validamos si el token es valido con la clave secreta
     try {
         const { payload } = await jwtVerify(ScannToken, new TextEncoder().encode('secretkey'));
-        console.log(payload);
+        const { pathname } = req.nextUrl;
+        const userRole = payload.role;
+
+        // definir las rutas permitidas para cada rol
+        const rolePermissions = {
+            User: ['/User'],
+            Admin: ['/Admin', '/User', '/Organizer', '/Operator'],
+            Organizer: ['/Organizer', '/User', '/Operator'],
+            Operator: ['/Operator']
+        }
         return NextResponse.next();
     } catch (error) {
         // si el token no es valido redirigimos a login
@@ -27,5 +36,5 @@ export async function middleware(req) {
 
 // proteccion de las rutas y subrutas
 export const config = {
-    matcher: ['/User/:path*','/Admin/:path*','/Organizer/:path*','/Operator/:path*']
+    matcher: ['/User/:path*', '/Admin/:path*', '/Organizer/:path*', '/Operator/:path*']
 }
