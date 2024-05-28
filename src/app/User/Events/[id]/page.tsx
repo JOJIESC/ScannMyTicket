@@ -20,7 +20,7 @@ const getProfile = async () => {
 
 
 // funcion encargada de suscribir al usuario a un evento
-async function Suscribe(subscription: any) {
+async function Subscribe(subscription: any) {
     const result = await axios.post(`/api/events/subscribe`, subscription)
     console.log(result)
     if (result.status === 200) {
@@ -38,17 +38,11 @@ function EventPage({ params }: { params: any },response:any) {
     const [evento, setEvento] = useState<Event | null>(null);
     const [userID, setUserID] = useState(null);
 
-    const subscription =  {
-        userID: userID,
-        eventID: params.id
-    }
-    console.log(subscription)
-
 //esta funcion toma los datos del usuario y setea el usuario
 React.useEffect(() => {
     getProfile()
     .then((response) => {
-        setUserID(response.data.Id)
+        setUserID(response.data.id)
     })
     .catch((error) => {
         console.log(error)
@@ -64,6 +58,19 @@ React.useEffect(() => {
 
         fetchData();
     }, [params.id]);
+
+    const handleSubscribe = async () => {
+        if(userID && evento){
+            const subscription =  {
+                userID: userID,
+                eventID: params.id
+            }
+            console.log(subscription)
+            Subscribe(subscription)
+        }else{
+            toast.error("No se pudo suscribir al evento")
+        }
+    }
 
     // si no hay evento, mostramos un spinner de carga
     if (!evento) {
@@ -126,7 +133,7 @@ React.useEffect(() => {
 
                     <div className="flex justify-center">
 
-                        <button onClick={()=>Suscribe(subscription)} className="py-6 px-28 rounded-lg bg-customGreen hover:bg-lime-600">Suscribirse</button>
+                        <button onClick={handleSubscribe} className="py-6 px-28 rounded-lg bg-customGreen hover:bg-lime-600">Suscribirse</button>
                     </div>
                 </div>
             </main>
