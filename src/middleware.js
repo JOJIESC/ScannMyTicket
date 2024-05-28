@@ -20,11 +20,20 @@ export async function middleware(req) {
 
         // definir las rutas permitidas para cada rol
         const rolePermissions = {
-            User: ['/User'],
-            Admin: ['/Admin', '/User', '/Organizer', '/Operator'],
-            Organizer: ['/Organizer', '/User', '/Operator'],
-            Operator: ['/Operator']
+            user: ['/User'],
+            admin: ['/Admin', '/User', '/Organizer', '/Operator'],
+            organizer: ['/Organizer', '/User', '/Operator'],
+            operator: ['/Operator']
         }
+                // verificar si la ruta solicitada está permitida para el rol del usuario
+                const allowedPaths = rolePermissions[userRole] || [];
+                const isPathAllowed = allowedPaths.some(path => pathname.includes(path));
+                console.log(isPathAllowed);
+
+                if (!isPathAllowed) {
+                    return NextResponse.redirect(new URL('/Unaunthorized', req.url));
+                }
+
         return NextResponse.next();
     } catch (error) {
         // si el token no es valido redirigimos a login
