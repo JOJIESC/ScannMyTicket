@@ -20,7 +20,7 @@ export async function middleware(req) {
 
         // definir las rutas permitidas para cada rol
         const rolePermissions = {
-            user: ['/User'],
+            user: ['/User','/Organizer'],
             admin: ['/Admin', '/User', '/Organizer', '/Operator'],
             organizer: ['/Organizer', '/User', '/Operator'],
             operator: ['/Operator']

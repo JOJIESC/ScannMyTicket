@@ -16,7 +16,8 @@ function Account() {
     last_name: "",
     birth_date: "",
     phone_number: "",
-    password: ""
+    password: "",
+    id: ""
   });
 
   const getProfile = async () => {
@@ -52,9 +53,17 @@ const updateProfile = async () => {
     const response = await axios.put('/api/users/update', user)
     console.log(response.data)
     if (response.status === 200) {
-        toast.success('Perfil actualizado, los cambios se verán reflejados en el proximo inicio de sesión')
-    }
+        toast.success('Perfil actualizado')
 
+        // Obtén un nuevo token después de actualizar el perfil
+        const id = user.id
+        const authResponse = await axios.post('/api/users/refreshToken', id)
+        if (authResponse.status === 200) {
+            // Guarda el nuevo token en las cookies
+            toast.success('Token actualizado')
+        }
+    }
+    // 
 
 }
 
