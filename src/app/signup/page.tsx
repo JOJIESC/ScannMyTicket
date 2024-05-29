@@ -4,6 +4,7 @@ import Image from "next/image"
 import {useRef, useState} from "react"
 import axios from "axios"
 import {useRouter} from "next/navigation"
+import {toast} from "react-toastify"
 
 function signup() {
   const router = useRouter()
@@ -32,6 +33,9 @@ function signup() {
     console.log(adduser);
     const res = await axios.post(`/api/users/new`, adduser)
     console.log(res);
+    if (res.status === 200) {
+      toast.success('Usuario creado')
+    }
     if (form.current) {
       (form.current as HTMLFormElement).reset()
     }

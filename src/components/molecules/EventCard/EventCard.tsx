@@ -9,9 +9,10 @@ interface EventCardProps {
     end: Date;
     startTime: string;
     endTime: string;
+    location: string;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ title, event_id, start, end,startTime,endTime }) => {
+const EventCard: React.FC<EventCardProps> = ({ title, event_id, start, end,startTime,endTime,location }) => {
     return (
         <Link href={`./Events/${event_id}`} className="w-1/2 flex flex-col items-center bg-customGray border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100">
             <div className='flex h-full '>
@@ -24,6 +25,7 @@ const EventCard: React.FC<EventCardProps> = ({ title, event_id, start, end,start
                 <p>Start time: {startTime}</p>
                 <p className='font-normal text-gray-700'>Ends at: {end.toString()}</p>
                 <p>End time: {endTime}</p>
+                <p>Location: {location}</p>
             </div>
         </Link>
     );

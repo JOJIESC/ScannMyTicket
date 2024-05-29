@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react"
 import { Event } from "@/types"
 import { toast } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css'
+import BackButton from "@/components/atoms/BackButton/BackButton"
 
 async function loadEvents(eventID: number) {
     // traemos los datos del evento segun su id
@@ -91,11 +92,22 @@ React.useEffect(() => {
 
     return (
         <div>
+            
             <main className="flex justify-around w-full h-full py-28 px-20 ">
                 <div className="flex flex-col gap-8">
+                <BackButton />
                     <Image className="h-80 w-[650px] rounded-lg" src={`/img/portadaEventos/${evento.id}.png`} alt={evento.title} width={500} height={200} />
+                    <div>
                     <h3 className="font-bold text-2xl">Descripción: </h3>
                     <p>{evento.description}</p>
+                    </div>
+
+                    <div>
+                    <h3 className="font-bold text-2xl">Ubicación: </h3>
+                    <p>{evento.location}</p>
+                    </div>
+                    
+                    
                 </div>
                 <div className="flex flex-col max-w-[340px] gap-8">
                     <div>
