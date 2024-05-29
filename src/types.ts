@@ -6,4 +6,5 @@ export interface Event {
     end:Date;
     startTime: string;
     endTime: string;
+    location: string;
 }

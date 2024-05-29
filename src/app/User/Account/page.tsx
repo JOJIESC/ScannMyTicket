@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css'
+import BackButton from '@/components/atoms/BackButton/BackButton'
 
 function Account() {
   const [user, setuser] = useState({
@@ -70,6 +71,7 @@ const updateProfile = async () => {
   return (
     <div className='flex justify-around items-center h-dvh p-16'>
       <section className='w-2/4'>
+      <BackButton />
         <h1 className='font-bold text-5xl mb-20'>Account settings</h1>
 
         <div >

@@ -43,7 +43,7 @@ export async function POST(req) {
     try {
 
         //espera estos valores de entrada
-        const { title, description, image_url, user_id, start, end,startTime, endTime } = await req.json();
+        const { title, description, image_url, user_id, start, end,startTime, endTime,location } = await req.json();
 
         //insertar evento en la base de datos con los valores esperados de entrada
         const result = await conn.query('INSERT INTO events SET ?', {
@@ -54,7 +54,8 @@ export async function POST(req) {
             start: start,
             end: end,
             startTime: startTime,
-            endTime: endTime
+            endTime: endTime,
+            location: location
         });
 
         console.log(result);
@@ -68,7 +69,8 @@ export async function POST(req) {
             start,
             end,
             startTime,
-            endTime
+            endTime,
+            location
         });
 
 

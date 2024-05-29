@@ -48,6 +48,7 @@ function Events() {
                         end={evento.end}
                         startTime={evento.startTime}
                         endTime={evento.endTime}
+                        location={evento.location}
                     />
                 )
             })}
