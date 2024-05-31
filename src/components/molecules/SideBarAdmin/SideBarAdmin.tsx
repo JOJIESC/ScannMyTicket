@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import React from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname,useRouter } from 'next/navigation'
+import axios from 'axios'
 
 function SideBarAdmin() {
     const links = [
@@ -44,7 +45,12 @@ function SideBarAdmin() {
     ]
 
     //este hook es para obtener la ruta actual y establecer estilo sobre el link activo
+    const router = useRouter()
     const pathname = usePathname()
+    const logout = () => {
+        const response = axios.post('/api/auth/logout')
+        router.push('/login')
+      }
     return (
         <aside className='w-80 h-dvh px-5 py-10 flex flex-col justify-between flex-shrink-0'>
             {/* Scann my Ticket title and icon navbar */}
@@ -73,7 +79,7 @@ function SideBarAdmin() {
                 })}
             </div>
             <div>
-                <button className=' text-red-600 font-bold px-4 py-2 rounded-lg flex items-center gap-2'>
+            <button onClick={()=>logout()} className=' text-red-600 font-bold px-4 py-2 rounded-lg flex items-center gap-2'>
                     Cerrar Sesión
                     <span className="material-symbols-outlined">
                         logout
