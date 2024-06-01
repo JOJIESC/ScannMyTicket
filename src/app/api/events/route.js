@@ -42,37 +42,17 @@ export async function GET() {
 export async function POST(req) {
     try {
 
-        //espera estos valores de entrada
-        const { title, description, image_url, user_id, start, end,startTime, endTime,location } = await req.json();
+        const data = await req.formData();
+        console.log(data.get('start'));
+        console.log(data.get('end'));
+        console.log(data.get('title'));
+        console.log(data.get('description'));
+        console.log(data.get('location'));
+        console.log(data.get('url'));
 
-        //insertar evento en la base de datos con los valores esperados de entrada
-        const result = await conn.query('INSERT INTO events SET ?', {
-            title: title,
-            description: description,
-            image_url: image_url,
-            user_id: user_id,
-            start: start,
-            end: end,
-            startTime: startTime,
-            endTime: endTime,
-            location: location
-        });
-
-        console.log(result);
-        //imprime el resultado y envia un next response con el resultado
         return NextResponse.json({
-            id: result.insertId,
-            title,
-            description,
-            image_url,
-            user_id,
-            start,
-            end,
-            startTime,
-            endTime,
-            location
+            message: "evento creado"
         });
-
 
     } catch (error) {
         console.log(error);
