@@ -1,4 +1,5 @@
 import React from 'react'
+import SideBarAdmin from '@/components/molecules/SideBarAdmin/SideBarAdmin'
 
 function LayoutAdmin({
     children,
@@ -6,10 +7,12 @@ function LayoutAdmin({
     children: React.ReactNode;
   }>) {
   return (
+<main className='flex'>
+    <SideBarAdmin />
     <div>
-      {/* componente side Bar */}
       {children}
     </div>
+</main>
   )
 }
 

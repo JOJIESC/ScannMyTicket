@@ -1,4 +1,3 @@
-
 'use client';
 import React from "react";
 import Avatar from "@/components/atoms/Avatar/Avatar";
@@ -36,4 +35,5 @@ export default function Admin() {
             </div>
         </div>
     );
+
 }

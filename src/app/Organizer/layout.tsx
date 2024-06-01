@@ -7,10 +7,12 @@ function LayoutOrganizer({
     children: React.ReactNode;
   }>) {
   return (
-    <div>
+    <main className='flex'>
       <SideBarOrganizer />
+      <div className='w-full h-full p-5'>
       {children}
-    </div>
+      </div>
+    </main>
   )
 }
 

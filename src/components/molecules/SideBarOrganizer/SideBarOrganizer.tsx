@@ -1,22 +1,17 @@
 'use client'
-import { usePathname } from "next/navigation";
+import { usePathname,useRouter } from "next/navigation";
 import Link from "next/link";
+import axios from "axios";
 
 function SideBarOrganizer() {
   const links = [
     {
         name: 'Dashboard',
-        //Pendiente: cambiar rutas por /organizer([id])
         href: '/Organizer',
         icon: 'space_dashboard'
     },
     {
-        name: 'Analitics',
-        href: '/Organizer/Analitics',
-        icon: 'data_usage'
-    },
-    {
-        name: 'Users',
+        name: 'Users List',
         href: '/Organizer/Users',
         icon: 'face'
     },
@@ -27,19 +22,30 @@ function SideBarOrganizer() {
     },
     {
         name: 'Crea un evento',
-        href: '/Organizer/CreateEvent',
+        href: '/Organizer/AddEvent',
         icon: 'confirmation_number'
     },
     {
+        name: 'User profile',
+        href: '/User',
+        icon: 'person'
+    },
+    {
         name: 'Account',
-        href: '/Admin/Account',
+        href: '/Organizer/Account',
         icon: 'id_card'
     }
 ]
 
 const pathname = usePathname()
+  //manejar el cierre de sesion
+  const router = useRouter()
+  const logout = () => {
+    const response = axios.post('/api/auth/logout')
+    router.push('/login')
+  }
   return (
-<nav className='w-80 h-dvh px-5 py-10 flex flex-col justify-between'>
+<aside className='w-80 h-dvh px-5 py-10 flex flex-col justify-between flex-shrink-0'>
             {/* Scann my Ticket title and icon navbar */}
             <div className='flex items-center gap-2 mb-8'>
                 <svg height="48px" viewBox="0 -960 960 960" width="48px"
@@ -66,14 +72,14 @@ const pathname = usePathname()
                 })}
             </div>
             <div>
-                <button className=' text-red-600 font-bold px-4 py-2 rounded-lg flex items-center gap-2'>
+                <button onClick={()=>logout()} className=' text-red-600 font-bold px-4 py-2 rounded-lg flex items-center gap-2'>
                     Cerrar Sesión
                     <span className="material-symbols-outlined">
                         logout
                     </span>
                 </button>
             </div>
-        </nav>
+        </aside>
   )
 }
 

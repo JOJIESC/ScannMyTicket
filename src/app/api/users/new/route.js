@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { conn } from '@/libs/mysql';
 
-export async function POST(req) {
+export async function POST(req,res) {
     try {
 
         //espera estos valores de entrada
-        const { email_address,first_name,last_name,phone_number,password } = await req.json();
+        const { email_address,first_name,last_name,phone_number,password,birth_date } = await req.json();
 
         //insertar evento en la base de datos con los valores esperados de entrada
         const result = await conn.query('INSERT INTO users SET ?', {
@@ -13,10 +13,11 @@ export async function POST(req) {
             first_name: first_name,
             last_name: last_name,
             phone_number: phone_number,
-            password: password
+            password: password,
+            birth_date: birth_date
         });
 
-        //imprime el resultado y envia un next response con el resultado
+        //imprime el resultado y envia un next params con el resultado
         console.log(result);
         return NextResponse.json({
             id: result.insertId,
@@ -25,6 +26,7 @@ export async function POST(req) {
             last_name,
             phone_number,
             password,
+            birth_date
         });
 
 
@@ -40,3 +42,7 @@ export async function POST(req) {
     }
 
 }
+
+
+
+
