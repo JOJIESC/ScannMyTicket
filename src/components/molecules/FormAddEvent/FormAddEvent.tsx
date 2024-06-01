@@ -15,7 +15,8 @@ function FormAddEvent() {
         endDate: "",
         endTime: "",
         description: "",
-        image: ""
+        image: "",
+        location: ""
     })
 
     const [file, setFile] = useState<File | null>(null)
@@ -39,13 +40,16 @@ function FormAddEvent() {
     const handleChangeEvent = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setEvent({
             ...event,
-            [e.target.id]: e.target.value
+            [e.target.name]: e.target.value,
+            
         })
+        console.log([e.target.id], e.target.value)
     }
 
     interface Operator {
         email: string;
         password: string;
+        event_id: number;
     }
 
 
@@ -64,7 +68,7 @@ function FormAddEvent() {
     const handleAddOperator = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        const newOperator = { email, password };
+        const newOperator = { email, password, event_id: 0}; // Provide an initializer for the "event_id" property
         if (operators.find(operator => operator.email === email)) {
             alert('El operador ya existe, por favor ingresa otro operador con un correo diferente.');
             return;
@@ -91,14 +95,29 @@ function FormAddEvent() {
         formData.append('endTime', event.endTime)
         formData.append('description', event.description)
         formData.append('user_id', user.id)
-        formData.append('location', 'Mexico')
-        formData.append('image', file as Blob)
+        formData.append('location', event.location)
+        console.log(file)
+        if (file !== null) {
+            formData.append('image', file)
 
-        console.log(formData)
-
-        const result = await axios.post('http://localhost:3000/api/events', formData)
-        console.log(result)
-        console.log(event)
+        }
+        console.log(file)
+        const result = await axios.post('http://localhost:3000/api/events', formData,{
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+            
+        });
+        const event_id = result.data.event_id;
+        console.log(event_id)
+        const UpdatedOperators = operators.map(operator => {
+            return {
+                ...operator, 
+                event_id: event_id}
+        })
+        
+        const SubmitOperator = await axios.post('http://localhost:3000/api/events/postOperator', UpdatedOperators)
+        console.log(SubmitOperator)
     }
 
     return (
@@ -167,7 +186,7 @@ function FormAddEvent() {
                             <h4 className='font-bold text-base'>Portada de tu evento</h4>
 
                             <div className="flex items-center justify-start w-full">
-                                <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-14 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50">
+                                <label htmlFor="image" className="flex flex-col items-center justify-center w-full h-14 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50">
                                     <div className="flex gap-4 items-center justify-center pt-5 pb-6">
                                         <svg className="w-5 h-5 text-gray-500 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                                             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
@@ -180,7 +199,7 @@ function FormAddEvent() {
                                             console.log(e.target.files[0])
                                         }
 
-                                    }} id="dropzone-file" type="file" className="hidden" />
+                                    }} id="image" type="file" className="hidden" />
                                 </label>
                             </div>
                         </div>
