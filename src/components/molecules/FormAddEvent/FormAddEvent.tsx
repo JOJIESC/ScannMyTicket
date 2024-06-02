@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import AddOperatorModal from '@/components/molecules/Modal/Modal'
 import OperatorCardData from '@/components/atoms/OperatorCardData/OperatorCardData'
 import axios from 'axios'
+import { toast } from 'react-toastify'
 
 // este codigo solo lo entiende dios y yo
 
@@ -118,6 +119,18 @@ function FormAddEvent() {
         
         const SubmitOperator = await axios.post('http://localhost:3000/api/events/postOperator', UpdatedOperators)
         console.log(SubmitOperator)
+
+        if(result.status === 201){
+            toast.success('Evento creado con exito')
+        }else{
+            toast.error('Ocurrio un error al crear el evento')
+        }
+        if(SubmitOperator.status === 200){
+            toast.success('Operadores agregados con exito')
+        }
+        else{
+            toast.error('Ocurrio un error al agregar los operadores')
+        }
     }
 
     return (
