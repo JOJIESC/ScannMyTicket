@@ -117,7 +117,7 @@ function Account() {
           <div className="w-full">
             <label htmlFor="countries" className="block mb-2 text-sm font-medium text-gray-900">Selecciona un avatar: </label>
             <select onChange={handleSelect} id="countries" className="bg-customGray border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required>
-              <option selected>Escoge uno</option>
+            <option defaultValue={user.avatar}>{user.avatar}</option>
               {Avatares.map((avatar, index) => {
                 return <option key={index} value={avatar}>{avatar}</option>
               })}
