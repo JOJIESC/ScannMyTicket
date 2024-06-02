@@ -28,7 +28,8 @@ export async function POST(req,res) {
                     phone_number: usuario[0].phone_number,
                     birth_date: usuario[0].birth_date,
                     password: usuario[0].password,
-                    id: usuario[0].id
+                    id: usuario[0].id,
+                    avatar: usuario[0].avatar
                 }, 'secretkey')
 
                 // crea la cookie con el token

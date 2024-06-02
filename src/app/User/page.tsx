@@ -12,7 +12,8 @@ const Dashboard = () => {
         id: "",
         email: "",
         username: "",
-        role: ""
+        role: "",
+        avatar: ""
     })
 
     const getProfile = async () => {
@@ -51,7 +52,7 @@ const Dashboard = () => {
     return (
         <main className='py-11 px-36 flex gap-7 flex-col'>
             <div className='flex items-center gap-10 mb-5'>
-                <Avatar width={150} />
+                <Avatar avatarOption={user.avatar} width={150} />
                 <div>
                     <h1 className='font-bold text-7xl'>Home</h1>
                     <p>Bienvenido {user.username}</p>
