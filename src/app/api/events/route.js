@@ -55,9 +55,19 @@ export async function POST(req) {
         const image = data.get('image');
         const bytes = await image.arrayBuffer();
         const buffer = Buffer.from(bytes);
-        const filePath = path.join(process.cwd(), 'public', 'img', 'events', image.name);
-        await writeFile(filePath, buffer);
-        const image_url = await cloudinary.uploader.upload(filePath)
+        // const filePath = path.join(process.cwd(), 'public', 'img', 'events', image.name);
+        // await writeFile(filePath, buffer);
+        const image_url = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream({},(err,result)=>{
+            if(err){
+                reject(err);
+            }
+            resolve(result);   
+        }).end(buffer);
+    });
+
+    console.log(image_url);
+
         const result = await conn.query('INSERT INTO events SET ?', {
             title: data.get('title'),
             description: data.get('description'),

@@ -1,11 +1,101 @@
-import React from 'react'
+'use client';
+import React, { useState } from "react";
+import Avatar from "@/components/atoms/Avatar/Avatar";
+import EventCounter from "@/components/atoms/EventCounter/EventCounter";
+import axios from "axios";
 
-function Organizer() {
-  return (
-    <div>
-      <h1>hola</h1>
-    </div>
-  )
-}
 
-export default Organizer
+
+export default function Organizer() {
+
+        const [user, setuser] = useState({
+            username: "",
+            avatar: ""
+        });
+
+        const [NumUsers, setNumUsers] = useState(0)
+        const [NumEvents, setNumEvents] = useState(0)
+
+        const [UsersData, setUsersData] = useState([
+            {
+                avatar: ""
+            }
+        
+        ])
+
+        const getProfile = async () => {
+            const response = await axios.get('/api/auth/PROFILE')
+            setuser(response.data)
+            console.log(response)
+        }
+
+        //esta funcion toma los datos del usuario y setea el usuario
+        React.useEffect(() => {
+            getProfile()
+        }, [])
+
+        // traemos los datos de los usuarios
+        const getUsers = async () => {
+            const users = await axios.get('/api/admin/getAllUsers')
+            console.log(users.data)
+            setUsersData(users.data)
+            return UsersData
+        }
+
+        React.useEffect(() => {
+            getUsers()
+        }, [])
+
+        // STATS ------------------------------
+
+        const getNumerOfUsers = async () => {
+            const NumberUsers = await axios.get('/api/admin/countUsers')
+            setNumUsers(NumberUsers.data[0].total_users)
+            console.log(NumberUsers.data[0].total_users)
+            return NumberUsers.data
+        }
+
+        React.useEffect(() => {
+            getNumerOfUsers()
+        }, [])
+
+        const getNumerOfEvents = async () => {
+            const NumberEvents = await axios.get('/api/admin/countEvents')
+            setNumEvents(NumberEvents.data[0].total_events)
+            console.log(NumberEvents.data[0].total_events)
+            return NumberEvents.data
+        }
+
+        React.useEffect(() => {
+            getNumerOfEvents()
+        }, [])
+
+        return (
+            <div className="flex flex-col justify-center max-w-7xl gap-3">
+                <div className="ml-16 flex jutify-between gap-16 items-center mb-8">
+                    <Avatar avatarOption={user.avatar} width={100} />
+                    <div>
+                        <h1 className="font-bold text-5xl">Dashboard</h1>
+                        <p className="text-base text-gray-600">Bienvenido {user.username}</p>
+                    </div>
+                    <input className="flex-grow bg-customGray h-10 rounded-md p-2 shadow" type="text" placeholder="Busca un evento" />
+                </div>
+                <div className="flex gap-4 ">
+                    <EventCounter count={NumUsers} label="Total de mis usuarios" />
+                    <EventCounter count={NumEvents} label="Total de mis eventos" />
+                </div>
+
+                <div className="bg-gray-100 p-4 rounded-lg shadow-md w-full h-40">
+                    <h2 className="font-bold mb-2 font-2xl">Users:</h2>
+                    <div className="ml-8 -space-x-2 flex items-center flex-wrap">
+                        {UsersData.map((user,index) => { 
+                            return (
+                                <Avatar key={index} avatarOption={user.avatar} width={50} />
+                            )
+                        })}
+                    </div>
+                </div>
+            </div>
+        );
+
+    }
