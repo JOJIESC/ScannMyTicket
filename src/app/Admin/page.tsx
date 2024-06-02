@@ -5,7 +5,7 @@ import EventCounter from "@/components/atoms/EventCounter/EventCounter";
 
 export default function Admin() {
     return (
-        <div className="p-10">
+        <div className="flex flex-col justify-center max-w-7xl">
             <div className="ml-16 flex jutify-between gap-16 items-center mb-8">
                 <Avatar width={100} /> 
                 <div>

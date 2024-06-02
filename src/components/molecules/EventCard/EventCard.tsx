@@ -10,14 +10,15 @@ interface EventCardProps {
     startTime: string;
     endTime: string;
     location: string;
+    image_url: string;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ title, event_id, start, end,startTime,endTime,location }) => {
+const EventCard: React.FC<EventCardProps> = ({ title, event_id, start, end,startTime,endTime,location,image_url }) => {
     return (
         <Link href={`./Events/${event_id}`} className="w-1/2 flex flex-col items-center bg-customGray border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100">
             <div className='flex h-full '>
                 {/*La imagen se define por el id del evento */}
-                <Image width={200} height={300} className="object-cover w-full rounded-t-lg h-full md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src={`/img/portadaEventos/${event_id}.png`} alt=""/>
+                <Image width={200} height={300} className="object-cover w-full rounded-t-lg h-full md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src={image_url} alt={title}/>
             </div>
             <div className="flex flex-col justify-between p-4 leading-normal">
                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 ">{title}</h5>

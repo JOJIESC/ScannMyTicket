@@ -9,7 +9,7 @@ function LayoutAdmin({
   return (
 <main className='flex'>
     <SideBarAdmin />
-    <div>
+    <div className='w-full flex justify-start'>
       {children}
     </div>
 </main>

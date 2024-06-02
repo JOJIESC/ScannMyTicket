@@ -96,7 +96,7 @@ React.useEffect(() => {
             <main className="flex justify-around w-full h-full py-28 px-20 ">
                 <div className="flex flex-col gap-8">
                 <BackButton />
-                    <Image className="h-80 w-[650px] rounded-lg" src={`/img/portadaEventos/${evento.id}.png`} alt={evento.title} width={500} height={200} />
+                    <Image className="h-80 w-[650px] rounded-lg" src={evento.image_url} alt={evento.title} width={500} height={200} />
                     <div>
                     <h3 className="font-bold text-2xl">Descripción: </h3>
                     <p>{evento.description}</p>
