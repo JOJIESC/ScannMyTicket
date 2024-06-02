@@ -41,7 +41,8 @@ export async function POST(req, res) {
                     phone_number: usuario.phone_number,
                     birth_date: usuario.birth_date,
                     password: usuario.password,
-                    id: usuario.id
+                    id: usuario.id,
+                    avatar: usuario.avatar
                 }, 'secretkey')
 
                 // crea la cookie con el token

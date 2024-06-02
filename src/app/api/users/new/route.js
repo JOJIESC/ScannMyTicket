@@ -5,7 +5,7 @@ export async function POST(req,res) {
     try {
 
         //espera estos valores de entrada
-        const { email_address,first_name,last_name,phone_number,password,birth_date } = await req.json();
+        const { email_address,first_name,last_name,phone_number,password,birth_date,avatar } = await req.json();
 
         //insertar evento en la base de datos con los valores esperados de entrada
         const result = await conn.query('INSERT INTO users SET ?', {
@@ -14,7 +14,8 @@ export async function POST(req,res) {
             last_name: last_name,
             phone_number: phone_number,
             password: password,
-            birth_date: birth_date
+            birth_date: birth_date,
+            avatar: avatar
         });
 
         //imprime el resultado y envia un next params con el resultado
@@ -26,7 +27,8 @@ export async function POST(req,res) {
             last_name,
             phone_number,
             password,
-            birth_date
+            birth_date,
+            avatar
         });
 
 

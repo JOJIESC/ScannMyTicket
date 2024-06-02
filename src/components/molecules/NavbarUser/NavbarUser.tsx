@@ -1,8 +1,9 @@
 'use client';
 import Link from 'next/link';
-import React from 'react';
+import React, {useState} from 'react';
 import Avatar from '@/components/atoms/Avatar/Avatar';
 import { usePathname } from 'next/navigation';
+import axios from 'axios';
 
 function NavbarUser() {
     const links = [
@@ -28,6 +29,22 @@ function NavbarUser() {
         }
     ]
     const pathname = usePathname()
+
+    const [user, setuser] = useState({
+        avatar: ""
+    })
+
+    const getProfile = async () => {
+        const response = await axios.get('/api/auth/PROFILE')
+        setuser(response.data)
+        console.log(response)
+    }
+
+
+    //esta funcion toma los datos del usuario y setea el usuario
+    React.useEffect(() => {
+        getProfile()
+    }, [])
     return (
         <nav className='flex items-center w-full justify-between px-4 py-2'>
             <div className='flex justify-around w-full'>
@@ -45,7 +62,7 @@ function NavbarUser() {
             </div>
             <div className='flex justify-end items-center w-full'>
                 <input className='h-9 w-2/4 rounded-md px-2 font-bold mx-5 bg-customGray' type="text" placeholder='Busca un evento'/>
-                <Avatar width={50}/>
+                <Avatar avatarOption={user.avatar} width={50}/>
             </div>
         </nav>
     )

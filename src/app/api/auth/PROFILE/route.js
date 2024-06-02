@@ -26,7 +26,8 @@ export function GET(req,res) {
             phone_number: user.phone_number,
             birth_date: user.birth_date,
             password: user.password,
-            id: user.id
+            id: user.id,
+            avatar: user.avatar
         })
     } catch (err) { // si el token es inválido
         return NextResponse.json({ message: 'Invalid token' })

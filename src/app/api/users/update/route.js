@@ -5,7 +5,7 @@ export async function PUT(req,res) {
     try {
     
             //espera estos valores de entrada
-            const { email_address,first_name,last_name,phone_number,password,birth_date,id } = await req.json();
+            const { email_address,first_name,last_name,phone_number,password,birth_date,id,avatar } = await req.json();
     
             //actualizar evento en la base de datos con los valores esperados de entrada
             const result = await conn.query('UPDATE users SET ? WHERE id = ?', [{
@@ -14,7 +14,8 @@ export async function PUT(req,res) {
                 last_name: last_name,
                 phone_number: phone_number,
                 password: password,
-                birth_date: birth_date
+                birth_date: birth_date,
+                avatar: avatar
             }, id]);
 
             //imprime el resultado y envia un next params con el resultado
@@ -26,7 +27,8 @@ export async function PUT(req,res) {
                 last_name,
                 phone_number,
                 password,
-                birth_date
+                birth_date,
+                avatar
             });
     } catch (error) {
         return NextResponse.json({
