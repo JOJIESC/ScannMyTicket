@@ -7,4 +7,5 @@ export interface Event {
     startTime: string;
     endTime: string;
     location: string;
+    image_url: string;
 }
