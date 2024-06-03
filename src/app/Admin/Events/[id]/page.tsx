@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react"
 import { Event } from "@/types"
 import { toast } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css'
+import BackButton from "@/components/atoms/BackButton/BackButton"
 
 async function loadEvents(eventID: number) {
     // traemos los datos del evento segun su id
@@ -19,18 +20,6 @@ const getProfile = async () => {
 }
 
 
-// funcion encargada de suscribir al usuario a un evento
-async function Suscribe(subscription: any) {
-    const result = await axios.post(`/api/events/subscribe`, subscription)
-    console.log(result)
-    if (result.status === 200) {
-        toast.success("Te has suscrito al evento")
-    }
-    else if(result.status === 201){
-        toast.warn("Ya estás suscrito a este evento")
-    }
-    return result
-}
 
 
 function EventPage({ params }: { params: any },response:any) {
@@ -38,17 +27,11 @@ function EventPage({ params }: { params: any },response:any) {
     const [evento, setEvento] = useState<Event | null>(null);
     const [userID, setUserID] = useState(null);
 
-    const subscription =  {
-        userID: userID,
-        eventID: params.id
-    }
-    console.log(subscription)
-
 //esta funcion toma los datos del usuario y setea el usuario
 React.useEffect(() => {
     getProfile()
     .then((response) => {
-        setUserID(response.data.Id)
+        setUserID(response.data.id)
     })
     .catch((error) => {
         console.log(error)
@@ -58,12 +41,14 @@ React.useEffect(() => {
 
     useEffect(() => {
         const fetchData = async () => {
+            console.log(params.id)
             const data = await loadEvents(params.id);
             setEvento(data);
         };
 
         fetchData();
     }, [params.id]);
+
 
     // si no hay evento, mostramos un spinner de carga
     if (!evento) {
@@ -84,11 +69,22 @@ React.useEffect(() => {
 
     return (
         <div>
-            <main className="flex justify-around w-full h-full py-28 px-20 ">
+            
+            <main className="flex justify-around w-full h-full py-28 px-20 gap-8 ">
                 <div className="flex flex-col gap-8">
-                    <Image className="h-80 w-[650px] rounded-lg" src={`/img/portadaEventos/${evento.id}.png`} alt={evento.title} width={500} height={200} />
+                <BackButton />
+                    <Image className="h-80 w-auto rounded-lg" src={evento.image_url} alt={evento.title} width={500} height={200} />
+                    <div>
                     <h3 className="font-bold text-2xl">Descripción: </h3>
                     <p>{evento.description}</p>
+                    </div>
+
+                    <div>
+                    <h3 className="font-bold text-2xl">Ubicación: </h3>
+                    <p>{evento.location}</p>
+                    </div>
+                    
+                    
                 </div>
                 <div className="flex flex-col max-w-[340px] gap-8">
                     <div>
@@ -124,10 +120,6 @@ React.useEffect(() => {
                         </div>
                     </section>
 
-                    <div className="flex justify-center">
-
-                        <button onClick={()=>Suscribe(subscription)} className="py-6 px-28 rounded-lg bg-customGreen hover:bg-lime-600">Suscribirse</button>
-                    </div>
                 </div>
             </main>
         </div>
