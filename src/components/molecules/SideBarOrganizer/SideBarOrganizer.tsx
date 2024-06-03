@@ -17,7 +17,7 @@ function SideBarOrganizer() {
     },
     {
         name: 'Mis eventos',
-        href: '/Organizer/MisEventos',
+        href: '/Organizer/Events',
         icon: 'event_list'
     },
     {

@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Avatar from "@/components/atoms/Avatar/Avatar";
 import EventCounter from "@/components/atoms/EventCounter/EventCounter";
 import axios from "axios";
-import { title } from "process";
 
 function Organizer() {
     // Datos del usuario
@@ -29,13 +28,19 @@ function Organizer() {
     // STATS ------------------------------
     const [numSubs, setNumSubs] = useState(0);
     const [numEvents, setNumEvents] = useState([{
-        total_events: 0,
+        total_events: 0
+    }]);
+    const [myEvents, setmyEvents] = useState([{
         title: "",
         start: "",
         end: "",
-        location: ""
+        location: "",
+        id: "",
+        description: "",
+        image_url: "",
+        startTime: "",
+        endTime: ""
     }]);
-
     const getNumSubs = async (userId: string) => {
       console.log(userId);
       const results = await axios.post('/api/organizers/countSubs', { user_id: userId });
@@ -45,9 +50,16 @@ function Organizer() {
 
     const getNumEvents = async (userId: string) => {
       console.log(userId);
-      const results = await axios.post('/api/organizers/getMyEvents', { user_id: userId } );
+      const results = await axios.post('/api/organizers/countMyEvents', { user_id: userId } );
       setNumEvents(results.data);
       console.log(numEvents)
+      return results.data;
+    };
+
+    const getMyEvents = async (userId: string) => {
+      console.log(userId);
+      const results = await axios.post('/api/organizers/getMyEvents', { user_id: userId });
+      setmyEvents(results.data);
       return results.data;
     };
 
@@ -56,6 +68,7 @@ function Organizer() {
       if(user.id){
         getNumSubs(user.id);
         getNumEvents(user.id);
+        getMyEvents(user.id);
       }
         
     }, [user.id]);
@@ -74,7 +87,7 @@ function Organizer() {
             </div>
             <div className="flex gap-4 ">
                 <EventCounter count={numSubs} label="Total de suscriptores" />
-                <EventCounter count={numEvents.length} label="Total de mis eventos" />
+                <EventCounter count={numEvents[0].total_events} label="Total de mis eventos" />
             </div>
             
 
@@ -98,7 +111,7 @@ function Organizer() {
             </tr>
         </thead>
         <tbody>
-          {numEvents.map((event) => {
+          {myEvents.map((event) => {
             return (
             <tr className="border-b border-gray-200 " key={event.title}>
                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50">
