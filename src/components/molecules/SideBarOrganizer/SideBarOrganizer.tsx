@@ -11,7 +11,7 @@ function SideBarOrganizer() {
         icon: 'space_dashboard'
     },
     {
-        name: 'Users List',
+        name: 'Suscriptores',
         href: '/Organizer/Users',
         icon: 'face'
     },
@@ -26,7 +26,7 @@ function SideBarOrganizer() {
         icon: 'confirmation_number'
     },
     {
-        name: 'User profile',
+        name: 'Vista de usuario',
         href: '/User',
         icon: 'person'
     },
