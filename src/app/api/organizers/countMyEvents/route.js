@@ -1,7 +1,7 @@
 import {conn} from '@/libs/mysql';
 import {NextResponse} from 'next/server';
 
-export async function POST(req){
+export async function POST(req) {
     try {
         const {user_id} = await req.json();
         console.log(user_id);
@@ -13,16 +13,19 @@ export async function POST(req){
             });
         }
         const query = `
-        SELECT
-        * FROM events
-        WHERE user_id = ?;
+            SELECT 
+                COUNT(*) AS total_events
+            FROM 
+                events
+            WHERE 
+                user_id = ?;
         `;
-        const results = await conn.query(query, [user_id]);
+        const [results] = await conn.query(query, [user_id]);
         console.log(results);
-        return NextResponse.json(results);
-        } catch (error) {
+        return NextResponse.json([results]);
+    } catch (error) {
         return NextResponse.json({
-            message: "error obteniendo eventos"
+            message: "error contando eventos"
         }, {
             status: 500
         })

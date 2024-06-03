@@ -15,7 +15,7 @@ interface EventCardProps {
 
 const EventCard: React.FC<EventCardProps> = ({ title, event_id, start, end,startTime,endTime,location,image_url }) => {
     return (
-        <Link href={`./Events/${event_id}`} className="w-1/2 flex flex-col items-center bg-customGray border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100">
+        <Link href={`./Events/${event_id}`} className="w-[30rem] flex flex-col items-center bg-customGray border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100">
             <div className='flex h-full '>
                 {/*La imagen se define por el id del evento */}
                 <Image width={200} height={300} className="object-cover w-full rounded-t-lg h-full md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src={image_url} alt={title}/>
