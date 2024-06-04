@@ -5,7 +5,7 @@ import axios from "axios";
 import Avatar from "@/components/atoms/Avatar/Avatar";
 import { toast } from "react-toastify";
 
-interface User {
+interface Organizer {
   id: number;
   email_address: string;
   first_name: string;
@@ -16,52 +16,55 @@ interface User {
   password: string;
 }
 
-function EditUser() {
-  const [user, setUser] = useState<User | null>(null);
+function EditOrganizer() {
+  const [organizer, setOrganizer] = useState<Organizer | null>(null);
 
   useEffect(() => {
-    const userData = sessionStorage.getItem("editUser");
-    if (userData) {
-      setUser(JSON.parse(userData));
-      sessionStorage.removeItem("editUser"); 
+    const organizerData = sessionStorage.getItem("editOrganizer");
+    if (organizerData) {
+      setOrganizer(JSON.parse(organizerData));
+      sessionStorage.removeItem("editOrganizer");
     }
   }, []);
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (user) {
+    if (organizer) {
       try {
-        const response = await axios.post("/api/admin/editUser", user);
+        const response = await axios.post(
+          "/api/admin/editOrganizer",
+          organizer
+        );
 
         if (response.status === 200) {
-          toast.success("User updated successfully");
+          toast.success("Organizer updated successfully");
         } else {
-          toast.error("Error updating user");
+          toast.error("Error updating organizer");
         }
       } catch (error) {
-        console.error("Error updating user:", error);
-        toast.error("Error updating user");
+        console.error("Error updating organizer:", error);
+        toast.error("Error updating organizer");
       }
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (user) {
-      setUser({
-        ...user,
+    if (organizer) {
+      setOrganizer({
+        ...organizer,
         [e.target.name]: e.target.value,
       });
     }
   };
 
-  if (!user) {
+  if (!organizer) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="flex justify-around items-center h-dvh p-16">
       <section className="w-2/4">
-        <h1 className="font-bold text-5xl mb-20">Edit User</h1>
+        <h1 className="font-bold text-5xl mb-20">Edit Organizer</h1>
         <form onSubmit={handleSave}>
           <div>
             <label className="font-bold" htmlFor="first_name">
@@ -74,7 +77,7 @@ function EditUser() {
                 name="first_name"
                 id="first_name"
                 placeholder="First name"
-                value={user.first_name}
+                value={organizer.first_name}
                 onChange={handleChange}
               />
               <input
@@ -83,7 +86,7 @@ function EditUser() {
                 name="last_name"
                 id="last_name"
                 placeholder="Last name"
-                value={user.last_name}
+                value={organizer.last_name}
                 onChange={handleChange}
               />
             </div>
@@ -97,7 +100,7 @@ function EditUser() {
             name="email_address"
             id="email_address"
             placeholder="Email"
-            value={user.email_address}
+            value={organizer.email_address}
             onChange={handleChange}
           />
           <label className="font-bold" htmlFor="phone_number">
@@ -109,7 +112,7 @@ function EditUser() {
             name="phone_number"
             id="phone_number"
             placeholder="Phone number"
-            value={user.phone_number}
+            value={organizer.phone_number}
             onChange={handleChange}
           />
           <label className="font-bold" htmlFor="birth_date">
@@ -121,7 +124,7 @@ function EditUser() {
             name="birth_date"
             id="birth_date"
             placeholder="Birth date"
-            value={user.birth_date}
+            value={organizer.birth_date}
             onChange={handleChange}
           />
           <label className="font-bold" htmlFor="password">
@@ -133,7 +136,7 @@ function EditUser() {
             name="password"
             id="password"
             placeholder="Birth date"
-            value={user.password}
+            value={organizer.password}
             onChange={handleChange}
           />
           <button
@@ -142,7 +145,7 @@ function EditUser() {
           >
             Guardar cambios
           </button>
-          <button onClick={()=>window.location.href = '/Admin/Users'}
+          <button onClick={()=>window.location.href = '/Admin/Organizers'}
             className="py-6 px-28 rounded-lg bg-red-600 hover:bg-red-800 font-bold text-white mt-20"
             
           >
@@ -151,10 +154,10 @@ function EditUser() {
         </form>
       </section>
       <section className="flex flex-col justify-around">
-        <Avatar width={350} avatarOption={user.avatar} />
+        <Avatar width={350} avatarOption={organizer.avatar} />
       </section>
     </div>
   );
 }
 
-export default EditUser;
+export default EditOrganizer;

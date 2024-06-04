@@ -54,14 +54,14 @@ export async function POST(req) {
     await db.end();
 
     return NextResponse.json({
-      message: "User updated successfully",
+      message: "Organizer updated successfully",
       result,
     });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       {
-        message: "Error updating user",
+        message: "Error updating Organizer",
         error: error.message,
       },
       {

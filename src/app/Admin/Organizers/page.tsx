@@ -23,8 +23,6 @@ export default function OrganizerTable() {
         avatar: ""
     });
 
-    const [NumOrganizers, setNumOrganizers] = useState(0)
-
     const getProfile = async () => {
         const response = await axios.get('/api/auth/PROFILE')
         setUser(response.data)
@@ -51,6 +49,11 @@ export default function OrganizerTable() {
     const filteredOrganizers = organizadoresData.filter(organizer =>
         `${organizer.first_name} ${organizer.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const handleEdit = (organizer: Organizer) => {
+        sessionStorage.setItem('editOrganizer', JSON.stringify(organizer));
+        window.location.href = `/Admin/Organizers/Edit`;
+    };
 
     return (
         <div className="flex flex-col justify-center w-full h-full gap-3">
@@ -81,7 +84,7 @@ export default function OrganizerTable() {
                             {filteredOrganizers.map(organizer => (
                                 <tr key={organizer.id}>
                                     <td className="py-2 px-4 border-b-2 border-gray-300 text-center">
-                                    <Avatar avatarOption={organizer.avatar} width={50} />
+                                        <Avatar avatarOption={organizer.avatar} width={50} />
                                     </td>
                                     <td className="py-2 px-4 border-b-2 border-gray-300 text-center">
                                         {organizer.first_name} {organizer.last_name}
@@ -90,7 +93,7 @@ export default function OrganizerTable() {
                                     <td className="py-2 px-4 border-b-2 border-gray-300 text-center">{organizer.phone_number}</td>
                                     <td className="py-2 px-4 border-b-2 border-gray-300 text-center">{organizer.birth_date}</td>
                                     <td className="py-2 px-4 border-b-2 border-gray-300 text-center">
-                                        <button>
+                                        <button onClick={() => handleEdit(organizer)}>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 className="h-6 w-6"
