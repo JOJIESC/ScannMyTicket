@@ -13,11 +13,6 @@ function SideBarAdmin() {
             icon: 'space_dashboard'
         },
         {
-            name: 'Analitics',
-            href: '/Admin/Analitics',
-            icon: 'data_usage'
-        },
-        {
             name: 'Users',
             href: '/Admin/Users',
             icon: 'face'
@@ -31,11 +26,6 @@ function SideBarAdmin() {
             name: 'Events',
             href: '/Admin/Events',
             icon: 'confirmation_number'
-        },
-        {
-            name: 'Reports',
-            href: '/Admin/Reports',
-            icon: 'description'
         },
         {
             name: 'Account',
