@@ -1,6 +1,14 @@
-import { conn } from "@/libs/mysql";
+import mysql from "serverless-mysql";
 import { NextResponse } from "next/server";
 
+const db = mysql({
+  config: {
+    host: "db-project.cv46koc6gsu5.us-east-1.rds.amazonaws.com",
+    user: "admin",
+    password: "bYAj1Ryi5qDUorTMUGT5",
+    database: "db",
+  },
+});
 
 export async function POST(req) {
   try {
@@ -42,19 +50,18 @@ export async function POST(req) {
       password,
     ];
 
-
     const result = await db.query(query, values);
     await db.end();
 
     return NextResponse.json({
-      message: "User updated successfully",
+      message: "Organizer updated successfully",
       result,
     });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
       {
-        message: "Error updating user",
+        message: "Error updating Organizer",
         error: error.message,
       },
       {

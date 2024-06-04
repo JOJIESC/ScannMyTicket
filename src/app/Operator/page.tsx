@@ -11,7 +11,7 @@ function DashboardOperator() {
                 </span></button>
             </header>
             <div className='flex flex-col justify-center items-center'>
-                <Avatar width={100} />
+                <Avatar width={100} avatarOption=''/>
                 <h1>Operador</h1>
                 <p>Welcome Back </p>
             </div>
