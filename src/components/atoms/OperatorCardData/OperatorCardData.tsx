@@ -3,7 +3,7 @@ import React from 'react'
 function OperatorCardData({ email, password,onRemove }: { email: string, password: string, onRemove: () => void}) {
 
     return (
-        <div className='border rounded-md flex justify-between items-center px-5'>
+        <div className='w-full border-2 rounded-md flex justify-between items-center px-5'>
             <div>
             <p className='font-bold'>Email: {email}</p>
             <p className='font-bold'>Password: {password}</p>

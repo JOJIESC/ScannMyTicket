@@ -1,14 +1,6 @@
-import mysql from "serverless-mysql";
+import { conn } from "@/libs/mysql";
 import { NextResponse } from "next/server";
 
-const db = mysql({
-  config: {
-    host: "db-project.cv46koc6gsu5.us-east-1.rds.amazonaws.com",
-    user: "admin",
-    password: "bYAj1Ryi5qDUorTMUGT5",
-    database: "db",
-  },
-});
 
 export async function POST(req) {
   try {
@@ -49,6 +41,7 @@ export async function POST(req) {
       id,
       password,
     ];
+
 
     const result = await db.query(query, values);
     await db.end();

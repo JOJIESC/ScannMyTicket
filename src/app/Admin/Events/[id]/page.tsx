@@ -6,6 +6,7 @@ import { Event } from "@/types"
 import { toast } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css'
 import BackButton from "@/components/atoms/BackButton/BackButton"
+import Link from "next/link"
 
 async function loadEvents(eventID: number) {
     // traemos los datos del evento segun su id
@@ -39,6 +40,7 @@ React.useEffect(() => {
   }, [])
   
 
+  // se traen los datos iniciales el evento de la base de datos
     useEffect(() => {
         const fetchData = async () => {
             console.log(params.id)
@@ -62,9 +64,6 @@ React.useEffect(() => {
                 </div>
             </div>)
     }
-
-    // obtenemos los datos del evento segun su id
-
     console.log(evento)
 
     return (
@@ -119,7 +118,7 @@ React.useEffect(() => {
                             </div>
                         </div>
                     </section>
-
+                        <Link className="py-4 px-16 rounded-lg bg-customGreen hover:bg-lime-700 font-bold text-white " href={`/Admin/Events/${evento.id}/Edit`}>Edit</Link>
                 </div>
             </main>
         </div>

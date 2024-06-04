@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Avatar from "@/components/atoms/Avatar/Avatar";
 import { toast } from "react-toastify";
+import BackButton from "@/components/atoms/BackButton/BackButton";
 
 interface User {
   id: number;
@@ -61,6 +62,7 @@ function EditUser() {
   return (
     <div className="flex justify-around items-center h-dvh p-16">
       <section className="w-2/4">
+      <BackButton />
         <h1 className="font-bold text-5xl mb-20">Edit User</h1>
         <form onSubmit={handleSave}>
           <div>
