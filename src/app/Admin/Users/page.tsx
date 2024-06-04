@@ -36,6 +36,11 @@ export default function Usertable() {
         `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const handleEdit = (user: User) => {
+        sessionStorage.setItem('editUser', JSON.stringify(user));
+        window.location.href = `/Admin/Users/Edit`;
+    };
+
     return (
         <div className="flex flex-col justify-center w-full h-full gap-3">
             <div className="w-full p-4">
@@ -74,7 +79,7 @@ export default function Usertable() {
                                     <td className="py-2 px-4 border-b-2 border-gray-300 text-center">{user.phone_number}</td>
                                     <td className="py-2 px-4 border-b-2 border-gray-300 text-center">{user.birth_date}</td>
                                     <td className="py-2 px-4 border-b-2 border-gray-300 text-center">
-                                        <button>
+                                        <button onClick={() => handleEdit(user)}>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 className="h-6 w-6"
@@ -100,4 +105,3 @@ export default function Usertable() {
         </div>
     );
 }
-
