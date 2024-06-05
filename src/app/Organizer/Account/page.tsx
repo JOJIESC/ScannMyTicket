@@ -53,7 +53,7 @@ function Account() {
   const router = useRouter()
   const logout = () => {
     const response = axios.post('/api/auth/logout')
-    router.push('/login')
+    router.push('/')
   }
 
   // obtenemos el perfil del usuario desde cookies y lo seteamos en el estado
