@@ -47,23 +47,28 @@ function UsersList() {
 
     console.log(MySubs)
 
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [filteredEvents, setFilteredEvents] = useState(MySubs);
+
+    React.useEffect(() => {
+        setFilteredEvents(
+            MySubs.filter(event =>
+                event.title.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+        );
+        console.log(filteredEvents);
+    }, [searchTerm, MySubs]);
+
+
     return (
         <div>
             {/* Barra de busqueda */}
             <div className='flex justify-end'>
-                <form className="flex items-center max-w-sm">
                     <label htmlFor="simple-search" className="sr-only">Search</label>
-                    <div className="relative w-full">
-                        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-subscribers-none">
-
-                        </div>
-                        <input type="text" id="simple-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 " placeholder="Search branch name..." required />
+                    <div className="relative w-96">
+                        <input onChange={e => setSearchTerm(e.target.value)} type="text" id="simple-search" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 " placeholder="Busca un suscriptor..." />
                     </div>
-                    <button type="submit" className="p-2.5 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
 
-                        <span className="sr-only">Search</span>
-                    </button>
-                </form>
             </div>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <h4 className="text-3xl font-bold mb-3">Mis suscriptores:</h4>
@@ -90,7 +95,7 @@ function UsersList() {
                                 <td scope='row' colSpan={4} className='flex justify-center w-full'>No hay suscriptores</td>
                             </tr>
                         ) : (
-                            MySubs && MySubs.map((subscriber) => {
+                            filteredEvents && filteredEvents.map((subscriber) => {
                                 return (
                                     <tr className="border-b border-gray-200" key={subscriber.username}>
                                         <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50">
