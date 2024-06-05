@@ -82,6 +82,8 @@ function login() {
                 <p className="mt-4 text-sm text-center text-black">
                     ¿No tienes una cuenta? <a href="/signup" className="font-bold hover:text-customGreen">Registrate</a>
                 </p>
+                <hr />
+                    <a className="inline-flex items-center justify-center px-5 py-3 mr-3 text-base text-center font-bold rounded-lg text-indigo-500 hover:text-customGreen focus:ring-4 focus:ring-primary-300" href="/">Regresar</a>
             </div>
             <div className="w-full md:w-1/2 flex">
                 <Image src="/img/login.png" alt="login" className="m-auto h-auto w-auto max-md:hidden" width={600} height={600} />
