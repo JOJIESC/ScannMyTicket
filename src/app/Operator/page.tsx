@@ -1,17 +1,27 @@
+'use client'
 import React from 'react'
 import Avatar from '@/components/atoms/Avatar/Avatar'
 import Link from 'next/link'
+import axios from 'axios'
+import { useRouter } from 'next/navigation'
 
 function DashboardOperator() {
+    const router = useRouter()
+
+    const logout = async (event: React.MouseEvent) => {
+        const response = await axios.post('/api/auth/logout')
+        router.push('/')
+      }
+    
     return (
         <div className="flex min-h-full flex-1 flex-col px-6 py-5 lg:px-8 gap-4">
             <header className='w-full flex justify-end '>
-                <button><span className="material-symbols-outlined">
+                <button onClick={logout}><span className="material-symbols-outlined">
                     logout
                 </span></button>
             </header>
             <div className='flex flex-col justify-center items-center'>
-                <Avatar width={100} avatarOption=''/>
+                <Avatar width={100} avatarOption='Black.png'/>
                 <h1>Operador</h1>
                 <p>Welcome Back </p>
             </div>
