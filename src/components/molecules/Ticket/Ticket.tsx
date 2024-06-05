@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 interface TicketProps {
   event: {
@@ -7,7 +8,7 @@ interface TicketProps {
     description: string;
     start: string;
     end: string;
-    image_url: string; // Añadir la URL de la imagen
+    image_url: string;
   };
 }
 
@@ -26,9 +27,11 @@ const Ticket: React.FC<TicketProps> = ({ event }) => {
           Fecha Conclusión: {new Date(event.end).toLocaleString()}
         </p>
         <div className="flex justify-center">
-          <button className="bg-white rounded text-black font-bold p-2">
-            Generar
-          </button>
+          <Link href={`/User/MisTickets/${event.id}`}>
+            <button className="bg-white rounded text-black font-bold p-2">
+              Generar
+            </button>
+          </Link>
         </div>
       </div>
     </div>
