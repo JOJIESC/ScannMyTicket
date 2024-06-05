@@ -128,7 +128,8 @@ function Account() {
       </section>
       <section className='flex flex-col justify-around'>
         <Avatar avatarOption={user.avatar} width={350} />
-        <button onClick={updateProfile} className="py-6 px-28 rounded-lg bg-customGreen hover:bg-lime-700 font-bold text-white mt-20">Guardar cambios</button>
+        <button onClick={updateProfile} className="flex mt-8 justify-center bg-customGreen rounded text-black font-bold p-2 w-full hover:bg-customGreen
+          transition ease-in-out delay-100hover:-translate-y-1 hover:scale-110 duration-300">Guardar cambios</button>
         <button onClick={() => logout()} className=' text-red-600 font-bold px-4 py-2 rounded-lg flex items-center justify-center gap-2 mt-5'>
           Cerrar Sesión
           <span className="material-symbols-outlined">
