@@ -48,13 +48,14 @@ function LoginOperator() {
           </div>
         </div>
 
-        <div>
+        <div className='flex flex-col items-center'>
           <button
             type="submit"
             className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             Sign in
           </button>
+          <a className="inline-flex items-center justify-center px-5 py-3 mr-3 text-base text-center font-bold rounded-lg text-indigo-500 hover:text-customGreen focus:ring-4 focus:ring-primary-300" href="/">Regresar</a>
         </div>
       </form>
     </div>

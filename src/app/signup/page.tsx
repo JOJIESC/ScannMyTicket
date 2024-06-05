@@ -118,10 +118,12 @@ function signup() {
         <p className="mt-4 text-sm text-center text-black">
           ¿Ya tienes una cuenta? <a href="/login" className="font-bold hover:text-customGreen">Inicia Sesión</a>
         </p>
+        
       </div>
       <div className="flex justify-center items-center flex-col">
         <h1 className="w-full flex justify-center font-bold text-5xl pb-16">Registrate</h1>
         <Image className="flex justify-center mb-10" src="/img/registro.png" alt="imagen de registro" width={500} height={200} />
+                    <a className="inline-flex items-center justify-center px-5 py-3 mr-3 text-base text-center font-bold rounded-lg text-indigo-500 hover:text-customGreen focus:ring-4 focus:ring-primary-300" href="/">Regresar</a>
       </div>
     </main>
   )
