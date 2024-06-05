@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import dynamic from "next/dynamic";
 
-// Import dynamically to ensure it's only loaded on the client-side
 const QrScanner = dynamic(() => import("react-qr-scanner"), { ssr: false });
 
-const QrReaderComponent: React.FC = () => {
+interface QrReaderComponentProps {
+  className?: string;
+}
+
+const QrReaderComponent: React.FC<QrReaderComponentProps> = ({ className }) => {
   const [scanResult, setScanResult] = useState<string | null>(null);
 
   const handleScan = (data: any) => {
@@ -20,16 +23,18 @@ const QrReaderComponent: React.FC = () => {
   };
 
   return (
-    <div className="qr-reader">
+    <div className={`qr-reader ${className}`}>
       <QrScanner
         delay={300}
         onError={handleError}
         onScan={handleScan}
-        className="qr-scanner"
+        className="qr-scanner w-full h-auto"
       />
-      {scanResult && <p>Scanned Result: {scanResult}</p>}
+      {scanResult && <p className="text-center mt-4">Scanned Result: {scanResult}</p>}
     </div>
   );
 };
 
 export default QrReaderComponent;
+
+
