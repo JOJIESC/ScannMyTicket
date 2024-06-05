@@ -1,12 +1,16 @@
-"use client";
-import axios from "axios";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { Event } from "@/types";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import BackButton from "@/components/atoms/BackButton/BackButton";
-import  QRCode  from "qrcode.react";
+'use client'
+
+import axios from 'axios';
+import Image from 'next/image';
+import React, { useEffect, useState, useRef } from 'react';
+import { Event } from '@/types';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import BackButton from '@/components/atoms/BackButton/BackButton';
+import QRCode from 'qrcode.react';
+import PdfTicket from '@/components/atoms/PdfTicket/PdfTicket';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 async function loadEvent(eventID: number) {
   const { data } = await axios.get(`/api/events/${eventID}`);
@@ -19,7 +23,7 @@ async function loadSubscription(userID: number, eventID: number) {
 }
 
 const getProfile = async () => {
-  const response = await axios.get("/api/auth/PROFILE");
+  const response = await axios.get('/api/auth/PROFILE');
   return response;
 };
 
@@ -27,6 +31,8 @@ function EventPage({ params }: { params: any }) {
   const [evento, setEvento] = useState<Event | null>(null);
   const [subscription, setSubscription] = useState<any | null>(null);
   const [userID, setUserID] = useState<number | null>(null);
+  const [showPdfTicket, setShowPdfTicket] = useState<boolean>(false);
+  const pdfRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getProfile()
@@ -49,12 +55,46 @@ function EventPage({ params }: { params: any }) {
           setSubscription(subscriptionData);
         }
       } catch (error) {
-        toast.error("Error al cargar los datos");
+        toast.error('Error al cargar los datos');
       }
     };
 
     fetchData();
   }, [params.id, userID]);
+
+  useEffect(() => {
+    if (showPdfTicket) {
+      setTimeout(() => {
+        const downloadPDF = async () => {
+          if (pdfRef.current) {
+            const canvas = await html2canvas(pdfRef.current, { 
+              useCORS: true,
+              scale: 2 // Aumenta la escala para mejorar la calidad
+            });
+            const imgData = canvas.toDataURL('image/png', 1.0); // Ajusta la calidad de la imagen
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const imgProps = pdf.getImageProperties(imgData);
+            const canvasWidth = canvas.width;
+            const canvasHeight = canvas.height;
+            const ratio = canvasHeight / canvasWidth;
+            const pdfCanvasHeight = pdfWidth * ratio;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfCanvasHeight);
+            pdf.save("ticket.pdf");
+          }
+        };
+
+        downloadPDF();
+        setShowPdfTicket(false);
+      }, 1000); // Esperar 1 segundo antes de iniciar la descarga del PDF
+    }
+  }, [showPdfTicket]);
+
+  const handleDownloadClick = () => {
+    setShowPdfTicket(true);
+  };
 
   if (!evento || !subscription) {
     return (
@@ -109,38 +149,35 @@ function EventPage({ params }: { params: any }) {
           <div>
             <h1 className="text-4xl font-bold">{evento.title}</h1>
           </div>
-          <section className="flex flex-col gap-5 text-2xl">
-            <h2 className="flex items-center font-bold">
-              Información del Evento
-              <span className="material-symbols-outlined font-bold">info</span>
-            </h2>
-            <div>
-              <p className="font-bold">Fecha de inicio: </p>
-              <p>{new Date(evento.start).toLocaleString()}</p>
-              <div>
-                <p>Hora inicio: {evento.startTime}</p>
-              </div>
-            </div>
-            <div>
-              <p className="font-bold">Fecha de conclusión: </p>
-              <p>{new Date(evento.end).toLocaleString()}</p>
-              <div>
-                <p>Hora de conclusión: {evento.endTime}</p>
-              </div>
-            </div>
-          </section>
           <div className="flex flex-col items-center">
             <div className="bg-white p-4 rounded shadow-lg">
               <QRCode value={JSON.stringify(subscription)} size={256} />
             </div>
           </div>
+          <button onClick={handleDownloadClick} className="py-2 px-6 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600">
+          Descargar PDF
+        </button>
         </div>
       </main>
       <div className="flex justify-center mt-10">
-        <button className="py-2 px-6 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600">
-          Descargar QR
-        </button>
+        
       </div>
+      {showPdfTicket && (
+        <div ref={pdfRef} style={{ position: 'absolute', top: '-9999px', left: '-9999px' }}>
+          <PdfTicket
+            title={evento.title}
+            id={evento.id}
+            start={new Date(evento.start)}
+            end={new Date(evento.end)}
+            startTime={evento.startTime}
+            endTime={evento.endTime}
+            location={evento.location}
+            image_url={evento.image_url}
+            attendeeName={subscription.attendeeName}
+            subscription={subscription} 
+          />
+        </div>
+      )}
     </div>
   );
 }
