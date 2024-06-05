@@ -42,7 +42,7 @@ const pathname = usePathname()
   const router = useRouter()
   const logout = () => {
     const response = axios.post('/api/auth/logout')
-    router.push('/login')
+    router.push('/')
   }
   return (
 <aside className='w-80 h-dvh px-5 py-10 flex flex-col justify-between flex-shrink-0'>
