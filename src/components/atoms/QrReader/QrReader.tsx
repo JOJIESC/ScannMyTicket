@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import dynamic from "next/dynamic";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -11,13 +11,21 @@ interface QrReaderComponentProps {
 
 const QrReaderComponent: React.FC<QrReaderComponentProps> = ({ className }) => {
   const [scanResult, setScanResult] = useState<string | null>(null);
+  const lastScannedTimeRef = useRef<number | null>(null); // Referencia al tiempo del último escaneo
 
   const handleScan = (data: any) => {
     if (data) {
+      const currentTime = new Date().getTime();
+      if (
+        lastScannedTimeRef.current &&
+        currentTime - lastScannedTimeRef.current < 2000
+      ) {
+        return;
+      }
+      lastScannedTimeRef.current = currentTime;
       setScanResult(data.text);
     }
   };
-
   const handleError = (err: any) => {
     console.error(err);
   };
