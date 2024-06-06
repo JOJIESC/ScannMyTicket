@@ -66,14 +66,14 @@ const QrReaderComponent: React.FC<QrReaderComponentProps> = ({ className }) => {
   return (
     <div className={`qr-reader ${className}`}>
       <QrScanner
-        delay={300}
+        delay={500}
         onError={handleError}
         onScan={handleScan}
         className="qr-scanner w-full h-auto"
       />
-      {scanResult && (
+      {/* {scanResult && (
         <p>{JSON.parse(scanResult).id}</p>
-      )}
+      )} */}
     </div>
   );
 };
