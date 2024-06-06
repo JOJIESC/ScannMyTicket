@@ -14,7 +14,8 @@ export async function POST(req, res) {
                 exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
                 email: rows[0].email_address,
                 password: rows[0].password,
-                role: 'operator'
+                role: 'operator',
+                id: rows[0].id
             }, 'secretkey')
 
             const serialized = serialize('ScannToken', token, {

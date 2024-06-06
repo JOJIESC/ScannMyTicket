@@ -30,7 +30,7 @@ const Ticket: React.FC<TicketProps> = ({ event }) => {
         <div className="flex justify-center">
           <Link href={`/User/MisTickets/${event.id}`} className="flex justify-center bg-white rounded text-black font-bold p-2 w-full hover:bg-customGreen
           transition ease-in-out delay-100hover:-translate-y-1 hover:scale-110 duration-300">
-              Generar
+              Generar QR
           </Link>
         </div>
       </div>
