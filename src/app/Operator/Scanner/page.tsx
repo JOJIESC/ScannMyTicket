@@ -1,16 +1,14 @@
 "use client";
-
 import React from "react";
 import QrReaderComponent from "@/components/atoms/QrReader/QrReader";
+import BackButton from "@/components/atoms/BackButton/BackButton";
 
 function Scanner() {
-  
+
   return (
     <div className="flex min-h-full flex-1 flex-col px-6 py-5 lg:px-8 gap-4">
       <header>
-        <button>
-          <span className="material-symbols-outlined">arrow_back_ios</span>
-        </button>
+        <BackButton />
       </header>
       <div className="qr-page flex flex-col items-center p-4 md:p-8 lg:p-16">
         <div className="flex items-center mb-8">
@@ -22,7 +20,9 @@ function Scanner() {
         <div className="qr-section flex justify-center w-full h-full relative">
           <div className="relative w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl">
             <div className="absolute top-0 left-0 w-full h-full border-4 border-black"></div>
+            <div className="rounded-sm">
             <QrReaderComponent className="w-full h-full" />
+            </div>
           </div>
         </div>
       </div>

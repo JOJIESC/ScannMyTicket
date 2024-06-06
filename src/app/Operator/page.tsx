@@ -1,18 +1,54 @@
 'use client'
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import Avatar from '@/components/atoms/Avatar/Avatar'
-import Link from 'next/link'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import OperatorEventCard  from '@/components/atoms/OperatorEventCard/OperatorEventCard'
 
-function DashboardOperator() {
+function MisEVentos() {
+    const [isLoadingUser, setIsLoadingUser] = useState(true);
     const router = useRouter()
 
     const logout = async (event: React.MouseEvent) => {
         const response = await axios.post('/api/auth/logout')
         router.push('/')
+    }
+
+    // Traer datos del operador
+    const [user, setuser] = useState({
+        email_address: "",
+        password: "",
+        id: "",
+      });
+    
+      const getProfile = async () => {
+        try {
+            const response = await axios.get('/api/auth/PROFILE');
+            setuser(response.data);
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+        } finally {
+            setIsLoadingUser(false);
+        }
       }
     
+      React.useEffect(() => {
+        getProfile()
+      }, [])
+    
+    // Traer datos del los eventos al que pertenece
+    const [eventos, setEventos] = useState([])
+    const getEventos = async (email_address:string) => {
+        const response = await axios.post('/api/operator/getOperatorEvents', {operator_email : email_address})
+        setEventos(response.data)
+    }
+
+    useEffect(() => {
+        if (!isLoadingUser && user.email_address) {
+            getEventos(user.email_address);
+        }
+    }, [isLoadingUser, user.email_address]);
+
     return (
         <div className="flex min-h-full flex-1 flex-col px-6 py-5 lg:px-8 gap-4">
             <header className='w-full flex justify-end '>
@@ -21,35 +57,34 @@ function DashboardOperator() {
                 </span></button>
             </header>
             <div className='flex flex-col justify-center items-center'>
-                <Avatar width={100} avatarOption='Black.png'/>
-                <h1>Operador</h1>
+                <Avatar width={100} avatarOption='Black.png' />
+                <h1 className='font-bold text-xl'>Operador </h1>
                 <p>Welcome Back </p>
+                <p>{user.email_address}</p>
             </div>
-
-            <h2 className='font-bold text-xl'>Datos sobre tu evento:</h2>
-            <div className='flex flex-col  bg-customGray rounded-lg p-7'>
-                <div>
-                    <h3>Titulo</h3>
-                    <p>Fecha de inicio: 2021-10-10</p>
-                    <p>Hora de inicio: HH-MM</p>
-                    <p>Fecha de fin: 2021-10-10</p>
-                    <p>Hora de conclusión: HH-MM</p>
-                    <p>Ubicación: CDMX</p>
-                </div>
+            <div>
+                <h2 className='font-bold text-3xl'>Estos son tus eventos:</h2>
+                <p>Selecciona uno para poder empezar a registrar usuarios.</p>
             </div>
-                <div className='flex flex-col gap-2 text-white'>
-                <Link href='#' className='bg-[url("/img/operator/escaneaCodigos.png")] bg-cover h-40 w-full bg-center rounded-lg relative'>
-                    <p className='font-bold absolute text-2xl left-3 top-3 w-24'>Escanea codigos</p>
-                </Link>
-                <Link href='#' className='bg-[url("/img/operator/checkScanns.png")] bg-cover h-40 w-full bg-center rounded-lg relative'>
-                    <p className='font-bold absolute text-2xl left-3 top-3 w-24'>
-                        Ultimos elementos escaneados
-                    </p>
-                </Link>
-                </div>
-
+            {/* Aqui se deberian de mostrar los eventos del operador */}
+            <section className='flex flex-col gap-1 '>
+                {eventos.map((evento:any) => {
+                    return <OperatorEventCard 
+                    key={evento.title}
+                    id = {evento.id} 
+                    title = {evento.title}
+                    description = {evento.description}
+                    location = {evento.location}
+                    start = {evento.start}
+                    end = {evento.end}
+                    startTime = {evento.startTime}
+                    endTime = {evento.endTime}
+                    image_url= {evento.image_url}
+                    />
+                })}
+            </section>
         </div>
     )
 }
 
-export default DashboardOperator
+export default MisEVentos
