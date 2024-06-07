@@ -1,9 +1,42 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import QrReaderComponent from "@/components/atoms/QrReader/QrReader";
 import BackButton from "@/components/atoms/BackButton/BackButton";
+import { useRouter, useParams } from "next/navigation";
+import axios from "axios";
 
 function Scanner() {
+
+  const router = useRouter()
+  const params = useParams()
+  console.log(params)
+  const event_id = params.event_id
+  console.log(event_id)
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
+
+  // Traer datos del operador
+  const [user, setuser] = useState({
+    id: "",
+    email_address: "",
+  });
+
+  const getProfile = async () => {
+    try {
+      const response = await axios.get('/api/auth/PROFILE');
+      setuser(response.data);
+      console.log(response.data)
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    } finally {
+      setIsLoadingUser(false);
+    }
+  }
+
+  React.useEffect(() => {
+    getProfile()
+  }, [])
+
+  console.log(user.email_address)
 
   return (
     <div className="flex min-h-full flex-1 flex-col px-6 py-5 lg:px-8 gap-4">
@@ -21,10 +54,13 @@ function Scanner() {
           <div className="relative w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl">
             <div className="absolute top-0 left-0 w-full h-full border-4 border-black"></div>
             <div className="rounded-sm">
-            <QrReaderComponent className="w-full h-full" />
+              <QrReaderComponent className="w-full h-full" event_id={event_id} operator_email={user.email_address} />
             </div>
           </div>
         </div>
+            <p className="flex items-center max-w-96"><span className="material-symbols-outlined text-yellow-400">
+              notification_important
+            </span>En caso de que el escaner deje de escanear, por favor refresca la página</p>
       </div>
     </div>
   );
