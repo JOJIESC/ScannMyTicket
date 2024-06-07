@@ -6,7 +6,7 @@ import React, { useState,useEffect } from "react"
 
 async function loadEvents(){
         //verificar el puerto del servidor 
-        const {data} = await axios.get('http://localhost:3000/api/events/')
+        const {data} = await axios.get('/api/events/')
         return data
     }
     

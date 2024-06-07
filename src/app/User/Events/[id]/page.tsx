@@ -9,7 +9,7 @@ import BackButton from "@/components/atoms/BackButton/BackButton"
 
 async function loadEvents(eventID: number) {
     // traemos los datos del evento segun su id
-    const { data } = await axios.get(`http://localhost:3000/api/events/${eventID}`)
+    const { data } = await axios.get(`/api/events/${eventID}`)
     return data
 }
 

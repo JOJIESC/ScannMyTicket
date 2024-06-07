@@ -103,7 +103,7 @@ function FormAddEvent() {
 
         }
         console.log(file)
-        const result = await axios.post('http://localhost:3000/api/events', formData,{
+        const result = await axios.post('/api/events', formData,{
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -117,7 +117,7 @@ function FormAddEvent() {
                 event_id: event_id}
         })
         
-        const SubmitOperator = await axios.post('http://localhost:3000/api/events/postOperator', UpdatedOperators)
+        const SubmitOperator = await axios.post('/api/events/postOperator', UpdatedOperators)
         console.log(SubmitOperator)
 
         if(result.status === 201){

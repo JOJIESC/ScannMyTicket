@@ -22,7 +22,7 @@ function LoginOperator() {
   const handleSubmit = async (event: React.MouseEvent) => {
     event.preventDefault()
     console.log(credentials)
-    const results = await axios.post('http://localhost:3000/api/auth/operators/login', credentials)
+    const results = await axios.post('/api/auth/operators/login', credentials)
     console.log(results)
     if (results.status === 200){
       toast.success('Bienvenido')
