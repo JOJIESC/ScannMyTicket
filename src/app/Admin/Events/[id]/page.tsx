@@ -16,7 +16,6 @@ async function loadEvents(eventID: number) {
 
 const getProfile = async () => {
     const response = await axios.get('/api/auth/PROFILE')
-    console.log(response)
     return response
 }
 
@@ -35,7 +34,6 @@ React.useEffect(() => {
         setUserID(response.data.id)
     })
     .catch((error) => {
-        console.log(error)
     })
   }, [])
   
@@ -43,7 +41,6 @@ React.useEffect(() => {
   // se traen los datos iniciales el evento de la base de datos
     useEffect(() => {
         const fetchData = async () => {
-            console.log(params.id)
             const data = await loadEvents(params.id);
             setEvento(data);
         };
@@ -64,7 +61,6 @@ React.useEffect(() => {
                 </div>
             </div>)
     }
-    console.log(evento)
 
     return (
         <div>

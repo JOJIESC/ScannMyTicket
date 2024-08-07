@@ -4,7 +4,6 @@ import {NextResponse} from 'next/server';
 export async function POST(req) {
     try {
         const operatorsData = await req.json();
-        console.log(operatorsData);
         // Iterar sobre cada operador y realizar la inserción en la base de datos
         for (const operator of operatorsData) {
             const result = await conn.query('INSERT INTO operators SET ?', {
@@ -12,7 +11,6 @@ export async function POST(req) {
                 password: operator.password,
                 event_id: operator.event_id
             });
-            console.log(result);
         }
 
         return NextResponse.json({

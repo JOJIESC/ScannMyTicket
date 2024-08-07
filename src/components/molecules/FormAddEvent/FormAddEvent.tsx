@@ -30,7 +30,6 @@ function FormAddEvent() {
       const getProfile = async () => {
         const response = await axios.get('/api/auth/PROFILE')
         setuser(response.data)
-        console.log(response)
     }
     
     //esta funcion toma los datos del usuario y setea el usuario
@@ -44,7 +43,6 @@ function FormAddEvent() {
             [e.target.name]: e.target.value,
             
         })
-        console.log([e.target.id], e.target.value)
     }
 
     interface Operator {
@@ -78,9 +76,6 @@ function FormAddEvent() {
         }
     }
 
-    React.useEffect(() => {
-        console.log(operators)
-    }, [operators])
 
     const handleRemoveOperator = (index: number) => {
         setOperators(prevOperators => prevOperators.filter((_, i) => i !== index));
@@ -97,12 +92,10 @@ function FormAddEvent() {
         formData.append('description', event.description)
         formData.append('user_id', user.id)
         formData.append('location', event.location)
-        console.log(file)
         if (file !== null) {
             formData.append('image', file)
 
         }
-        console.log(file)
         const result = await axios.post('http://localhost:3000/api/events', formData,{
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -110,7 +103,6 @@ function FormAddEvent() {
             
         });
         const event_id = result.data.event_id;
-        console.log(event_id)
         const UpdatedOperators = operators.map(operator => {
             return {
                 ...operator, 
@@ -118,7 +110,6 @@ function FormAddEvent() {
         })
         
         const SubmitOperator = await axios.post('http://localhost:3000/api/events/postOperator', UpdatedOperators)
-        console.log(SubmitOperator)
 
         if(result.status === 201){
             toast.success('Evento creado con exito')
@@ -209,7 +200,6 @@ function FormAddEvent() {
                                     <input name='image' onChange={(e) => {
                                         if (e.target.files && e.target.files[0]) {
                                             setFile(e.target.files[0])
-                                            console.log(e.target.files[0])
                                         }
 
                                     }} id="image" type="file" className="hidden" />

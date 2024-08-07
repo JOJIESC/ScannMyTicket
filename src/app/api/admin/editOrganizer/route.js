@@ -13,7 +13,6 @@ const db = mysql({
 export async function POST(req) {
   try {
     const userData = await req.json();
-    console.log(userData);
 
     const {
       id,

@@ -26,7 +26,6 @@ export default function OrganizerTable() {
     const getProfile = async () => {
         const response = await axios.get('/api/auth/PROFILE')
         setUser(response.data)
-        console.log(response)
     }
 
     useEffect(() => {

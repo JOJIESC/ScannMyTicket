@@ -6,7 +6,6 @@ import { serialize } from 'cookie'
 export async function POST(req, res) {
     try {
         const { email, password } = await req.json()
-        console.log(email, password)
         const rows = await conn.query('SELECT * FROM operators WHERE email_address = ? AND password = ?', [email, password])
         const operatorExists = rows.find(operator => operator.email_address === email && operator.password === password)
         if(operatorExists){

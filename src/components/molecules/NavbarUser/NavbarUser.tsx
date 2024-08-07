@@ -37,7 +37,6 @@ function NavbarUser() {
     const getProfile = async () => {
         const response = await axios.get('/api/auth/PROFILE')
         setuser(response.data)
-        console.log(response)
     }
 
 

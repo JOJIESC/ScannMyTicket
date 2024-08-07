@@ -28,7 +28,6 @@ export async function middleware(req) {
                 // verificar si la ruta solicitada está permitida para el rol del usuario
                 const allowedPaths = rolePermissions[userRole] || [];
                 const isPathAllowed = allowedPaths.some(path => pathname.includes(path));
-                console.log(isPathAllowed);
 
                 if (!isPathAllowed) {
                     return NextResponse.redirect(new URL('/Unaunthorized', req.url));

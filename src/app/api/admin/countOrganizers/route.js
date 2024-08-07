@@ -5,7 +5,6 @@ export async function GET() {
     try {
         // trae a los usuarios de la base de datos
         const NumOrganizers = await conn.query('SELECT COUNT(*) as total_organizers FROM users WHERE role = "organizer"');
-        console.log(NumOrganizers);
         return NextResponse.json(NumOrganizers);
     } catch (error) {
         return NextResponse.json({

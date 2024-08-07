@@ -11,7 +11,6 @@ import { useRouter } from 'next/navigation'
 async function loadEvents(eventID: number) {
     // traemos los datos del evento segun su id
     const { data } = await axios.get(`http://localhost:3000/api/events/${eventID}`)
-    console.log(data)
     return data
 }
 function EditEvent({ params }: { params: any }) {
@@ -30,10 +29,8 @@ function EditEvent({ params }: { params: any }) {
 
     useEffect(() => {
         const fetchData = async () => {
-            console.log(params.id)
             const data = await loadEvents(params.id);
             setEvento(data);
-            console.log(data)
         };
 
         fetchData();
@@ -80,7 +77,6 @@ function EditEvent({ params }: { params: any }) {
     // Función encargada de actualizar el evento
     const updateEvent = async () => {
         try {
-            console.log(evento)
             const response = await axios.put('/api/events/update', evento);
             if (response.status === 200) {
                 toast.success('Evento actualizado');

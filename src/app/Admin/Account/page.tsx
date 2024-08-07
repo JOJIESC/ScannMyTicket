@@ -25,7 +25,6 @@ function Account() {
   const getProfile = async () => {
     const response = await axios.get('/api/auth/PROFILE')
     setuser(response.data)
-    console.log(response)
   }
 
   //esta funcion toma los datos del usuario y setea el usuario
@@ -42,7 +41,6 @@ function Account() {
   }
 
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(event.target.value);
     setuser({
       ...user,
       avatar: event.target.value
@@ -61,7 +59,6 @@ function Account() {
 
   const updateProfile = async () => {
     const response = await axios.put('/api/users/update', user)
-    console.log(response.data)
     if (response.status === 200) {
       toast.success('Perfil actualizado')
 

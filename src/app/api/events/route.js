@@ -36,7 +36,6 @@ export async function GET() {
                 });
 
 
-        console.log(formattedResults);
         return NextResponse.json(results);
     } catch (error) { // si hay un error al traer los eventos
         return NextResponse.json({
@@ -66,7 +65,6 @@ export async function POST(req) {
         }).end(buffer);
     });
 
-    console.log(image_url);
 
         const result = await conn.query('INSERT INTO events SET ?', {
             title: data.get('title'),
@@ -79,7 +77,6 @@ export async function POST(req) {
             endTime: data.get('endTime'),
             location: data.get('location'),
         });
-        console.log(result);
         const event_id = result.insertId;
 
         return NextResponse.json({
@@ -90,14 +87,6 @@ export async function POST(req) {
             status: 201
         }
         );
-
-        // console.log(data.get('startDate'));
-        // console.log(data.get('endDate'));
-        // console.log(data.get('title'));
-        // console.log(data.get('description'));
-        // console.log(data.get('location'));
-        // console.log(data.get('image'));
-        // console.log(data.get('user_id'))
 
     } catch (error) {
         console.log(error);

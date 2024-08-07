@@ -6,7 +6,7 @@ export async function POST(req, res) {
     try {
         const alreadyExists = await conn.query('SELECT * FROM subscriptions WHERE subscriber_id = ? AND subscribed_to = ?',
             [subscription.userID, subscription.eventID]);
-        console.log(alreadyExists);
+
         if (alreadyExists.length > 0) {
             console.log("Ya esta suscrito a este evento")
             return NextResponse.json({
@@ -23,7 +23,6 @@ export async function POST(req, res) {
                 // created_at se definen automaticamente en la base de datos
                 expires_at: expirationDate
             });
-            console.log(result);
             return NextResponse.json({
                 message: "Suscripcion creada",
                 id: result.insertId,

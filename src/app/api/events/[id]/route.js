@@ -5,8 +5,6 @@ import { conn } from '@/libs/mysql';
 export async function GET(req, { params }) {
 
     try {
-
-        console.log(params.id);
         //selecciona el evento con el id que se pasa como parametro desd la url
         const result = await conn.query('SELECT * FROM events WHERE id = ?', [params.id]);
         // Formatea las fechas en los resultados

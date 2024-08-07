@@ -4,10 +4,8 @@ import { NextResponse } from 'next/server'
 export async function POST(req) {
     try {
         const { eventId } = await req.json(); // Asegúrate de que se extrae eventId correctamente
-        console.log(eventId);
         const sql = `SELECT * FROM operators WHERE event_id = ?;`
         const rows = await conn.query(sql, [eventId])
-        console.log(rows);
         if (rows.length <= 0 || rows === undefined) {
             return NextResponse.json({ message: 'No operators found for this event' }, { status: 201 })
         }

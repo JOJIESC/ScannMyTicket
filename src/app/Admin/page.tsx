@@ -34,7 +34,6 @@ export default function Admin() {
         const getProfile = async () => {
             const response = await axios.get('/api/auth/PROFILE')
             setuser(response.data)
-            console.log(response)
         }
 
         //esta funcion toma los datos del usuario y setea el usuario
@@ -45,7 +44,6 @@ export default function Admin() {
         // traemos los datos de los organizadores
         const getOrganizers = async () => {
             const organizers = await axios.get('/api/organizers')
-            console.log(organizers.data)
             setOrganizadoresData(organizers.data)
             return organizadoresData
         }
@@ -57,7 +55,6 @@ export default function Admin() {
         // traemos los datos de los usuarios
         const getUsers = async () => {
             const users = await axios.get('/api/admin/getAllUsers')
-            console.log(users.data)
             setUsersData(users.data)
             return UsersData
         }
@@ -71,7 +68,6 @@ export default function Admin() {
         const getNumerOfUsers = async () => {
             const NumberUsers = await axios.get('/api/admin/countUsers')
             setNumUsers(NumberUsers.data[0].total_users)
-            console.log(NumberUsers.data[0].total_users)
             return NumberUsers.data
         }
 
@@ -82,7 +78,6 @@ export default function Admin() {
         const getNumerOfOrganizers = async () => {
             const NumberOrganizers = await axios.get('/api/admin/countOrganizers')
             setNumOrganizers(NumberOrganizers.data[0].total_organizers)
-            console.log(NumberOrganizers.data[0].total_organizers)
             return NumberOrganizers.data
         }
 
@@ -93,7 +88,6 @@ export default function Admin() {
         const getNumberOfAdmins = async () => {
             const NumberAdmins = await axios.get('/api/admin/countAdmins')
             setNumAdmins(NumberAdmins.data[0].total_admins)
-            console.log(NumberAdmins.data[0].total_admins)
             return NumberAdmins.data
         }
 
@@ -104,7 +98,6 @@ export default function Admin() {
         const getNumerOfEvents = async () => {
             const NumberEvents = await axios.get('/api/admin/countEvents')
             setNumEvents(NumberEvents.data[0].total_events)
-            console.log(NumberEvents.data[0].total_events)
             return NumberEvents.data
         }
 
