@@ -15,7 +15,8 @@ export async function POST(req,res) {
             phone_number: phone_number,
             password: password,
             birth_date: birth_date,
-            avatar: avatar
+            avatar: avatar,
+            role: 'user'
         });
 
         //imprime el resultado y envia un next params con el resultado

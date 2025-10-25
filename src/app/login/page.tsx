@@ -23,41 +23,25 @@ function login() {
         })
     }
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event?.preventDefault();
-        console.log(credentials);
+    // En /src/app/login/page.tsx
 
-        try {
-            const response = await axios.post('/api/auth/login', credentials);
+const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+        const response = await axios.post('/api/auth/login', credentials);
 
-            console.log(response);
-            //si el status es 200 redirigir a su ruta permitida
-            if (response.status === 200) {
-                const { role } = response.data;
-                console.log(role);
-                switch (role) {
-                    case 'admin':
-                        router.push('/Admin');
-                        break;
-                    case 'operator':
-                        router.push('/Operator');
-                        break;
-                    case 'user':
-                        router.push('/User');
-                        break;
-                    case 'organizer':
-                       router.push('/Organizer');
-                        break;
-                    default:
-                        router.push('/login');
-                        break;
-                }
-            }
-        } catch (error) {
-            console.log(error);
-            toast.warn('Usuario o contraseña incorrectos');
+        if (response.status === 200) {
+            // ¡Éxito! La cookie ya fue establecida por el servidor.
+            // Forzamos un refresco de página para que el middleware nos redirija.
+            // Redirigimos a una ruta genérica protegida como '/User'.
+            // El middleware se encargará de llevar al usuario a la página correcta según su rol.
+            window.location.href = '/User';
         }
+    } catch (error) {
+        console.log(error);
+        toast.warn('Usuario o contraseña incorrectos');
     }
+}
 
     return (
         <div className="flex flex-col md:flex-row h-screen w-auto bg-white">
