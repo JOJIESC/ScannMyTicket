@@ -1,143 +1,142 @@
-'use client'
+'use client';
 
-import Image from "next/image"
-import { useRef, useState } from "react"
-import axios from "axios"
-import { useRouter } from "next/navigation"
-import { toast } from "react-toastify"
-import Avatar from "@/components/atoms/Avatar/Avatar"
+import Image from "next/image";
+import { useRef, useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import Link from 'next/link';
+// Asumiendo que tienes un componente Avatar similar al del proyecto anterior
+// import Avatar from "@/components/atoms/Avatar/Avatar"; 
 
-function signup() {
-  const router = useRouter()
-  const [adduser, setadduser] = useState({
-    email_address: "",
-    first_name: "",
-    last_name: "",
-    password: "",
-    phone_number: "",
-    birth_date: "",
-    avatar: "",
+// Nombre del componente con Mayúscula inicial
+export default function SignupPage() {
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
+    const [adduser, setAddUser] = useState({
+        email_address: "",
+        first_name: "",
+        last_name: "",
+        password: "",
+        phone_number: "", // Opcional según tu lógica
+        birth_date: "",
+        avatar: "", // Opcional según tu lógica
+    });
 
-  })
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value, event.target.name);
-
-    setadduser({
-      ...adduser,
-      // los keys de la tabla seran los nombres de los inputs y sus valores seran los correspondientes
-      [event.target.name]: event.target.value
-    })
-  }
-
-  const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(event.target.value);
-    setadduser({
-      ...adduser,
-      avatar: event.target.value
-    })
-  }
-
-  // En /src/app/signup/page.tsx
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    try {
-      // 1. Registra al nuevo usuario
-      const res = await axios.post(`/api/users/new`, adduser);
-
-      if (res.status === 200) {
-        toast.success('Usuario creado, iniciando sesión...');
-
-        // 2. Inicia sesión con el nuevo usuario para obtener la cookie
-        const loginResponse = await axios.post('/api/auth/login', {
-          email: adduser.email_address,
-          password: adduser.password
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        setAddUser({
+            ...adduser,
+            [event.target.name]: event.target.value
         });
-
-        // 3. Si el inicio de sesión es exitoso, redirige
-        if (loginResponse.status === 200) {
-          // Usamos el mismo método: dejamos que el middleware haga el trabajo
-          window.location.href = '/User';
-        }
-      }
-    } catch (error) {
-      toast.error('Ocurrió un error durante el registro.');
-      console.log(error);
     }
-  }
-  const form = useRef<HTMLFormElement>(null)
 
-  //estilos de inputs y labels
-  const inputStyles = "w-full bg-customGray h-12 rounded-md  mb-4 p-2"
-  const labelStyles = "font-bold flex justify-start w-full"
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setIsLoading(true);
+        try {
+            // 1. Registra al nuevo usuario
+            const registerRes = await axios.post(`/api/auth/register`, adduser); // Usa la nueva ruta
 
-  const Avatares = [
-    "Black.png",
-    "Dark.jpg",
-    "DeepPurple.jpg",
-    "Gas.png",
-    "Japan.png",
-    "ManaPurple.jpg",
-    "OceanBlue.jpg",
-    "Purple.png",
-    "Red.jpg",
-    "RiverBlue.jpg",
-    "Temple.png",
-    "Ventura.jpg",
-    "Warm.png"
-  ];
-  return (
-    <main className="grid grid-cols-2 w-full h-full justify-center items-center">
-      <div className="flex justify-center flex-col w-full  px-10">
-        <form ref={form} onSubmit={handleSubmit} className="flex flex-col items-center">
-          <div className="flex justify-center items-center gap-1 w-full">
-            <div className="w-[90%]">
-              <label className={labelStyles} htmlFor="first_name">Nombre</label>
-              <input className={inputStyles} type="text" placeholder="Nombre" name="first_name" onChange={handleChange} required />
-            </div>
-            <div className="w-[90%]">
-              <label className={labelStyles} htmlFor="last_name">Apellio</label>
-              <input className={inputStyles} type="text" placeholder="Apellido" name="last_name" onChange={handleChange} required />
-            </div>
-          </div>
-          <label className={labelStyles} htmlFor="email_address">Correo</label>
-          <input className={inputStyles} type="email" placeholder="Correo" name="email_address" onChange={handleChange} required />
-          <label className={labelStyles} htmlFor="password">Contraseña</label>
-          <input className={inputStyles} type="password" placeholder="Contraseña" name="password" onChange={handleChange} required />
-          <label className={labelStyles} htmlFor="phone_number">Número de telefono</label>
-          <input className={inputStyles} type="text" placeholder="Número de telefono" name="phone_number" onChange={handleChange} required />
-          <label className={labelStyles} htmlFor="birth_date">Fecha de nacimiento</label>
-          <input className={inputStyles} type="date" placeholder="Fecha de nacimiento" name="birth_date" onChange={handleChange} required />
+            if (registerRes.status === 201) { // Verifica el status 201 Created
+                toast.success('Usuario creado, iniciando sesión...');
 
-          {/* Seleccion de avatar */}
-          <div className="flex justify-around items-center gap-5 w-full mb-7">
-            <div className="w-full">
-              <label htmlFor="countries" className="block mb-2 text-sm font-medium text-gray-900">Selecciona un avatar: </label>
-              <select onChange={handleSelect} id="countries" className="bg-customGray border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required>
-                <option selected>Escoge uno</option>
-                {Avatares.map((avatar, index) => {
-                  return <option key={index} value={avatar}>{avatar}</option>
-                })}
-              </select>
-            </div>
-            <Avatar width={100} avatarOption={adduser.avatar} />
-          </div>
+                // 2. Inicia sesión automáticamente con las credenciales
+                const loginRes = await axios.post('/api/auth/login', {
+                    email: adduser.email_address, // Coincide con el backend de login
+                    password: adduser.password
+                });
 
+                // 3. Si el login es exitoso, redirige via middleware
+                if (loginRes.status === 200) {
+                    window.location.href = '/User'; // Deja que el middleware decida
+                } else {
+                     toast.error('Error al iniciar sesión después del registro.');
+                }
+            }
+            // No necesitas resetear el form si vas a redirigir
+            // if (form.current) {
+            //   (form.current as HTMLFormElement).reset()
+            // }
+        } catch (error: any) {
+            console.error("Error en signup:", error);
+            const message = error.response?.data?.message || 'Ocurrió un error durante el registro.';
+            toast.error(message);
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
-          <button type="submit" className="text-black bg-customGreen rounded-lg w-[315px] h-16">Sign up</button>
-        </form>
-        <p className="mt-4 text-sm text-center text-black">
-          ¿Ya tienes una cuenta? <a href="/login" className="font-bold hover:text-customGreen">Inicia Sesión</a>
-        </p>
+    const form = useRef<HTMLFormElement>(null);
 
-      </div>
-      <div className="flex justify-center items-center flex-col">
-        <h1 className="w-full flex justify-center font-bold text-5xl pb-16">Registrate</h1>
-        <Image className="flex justify-center mb-10" src="/img/registro.png" alt="imagen de registro" width={500} height={200} />
-        <a className="inline-flex items-center justify-center px-5 py-3 mr-3 text-base text-center font-bold rounded-lg text-indigo-500 hover:text-customGreen focus:ring-4 focus:ring-primary-300" href="/">Regresar</a>
-      </div>
-    </main>
-  )
+    // Lista de avatares (si la usas)
+    // const Avatares = [ ... ];
+
+    return (
+         <main className="flex flex-col md:flex-row min-h-screen w-full bg-white">
+             {/* Columna del Formulario */}
+             <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-8 lg:p-16 order-2 md:order-1">
+                 <div className="w-full max-w-md">
+                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-8 text-center md:text-left">Crea tu Cuenta</h1>
+                     <form ref={form} onSubmit={handleSubmit} className="space-y-4">
+                         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                             <div className="w-full sm:w-1/2">
+                                 <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="first_name">Nombre</label>
+                                 <input className="w-full px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" type="text" placeholder="Tu nombre" name="first_name" onChange={handleChange} required disabled={isLoading} />
+                             </div>
+                             <div className="w-full sm:w-1/2">
+                                 <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="last_name">Apellido</label>
+                                 <input className="w-full px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" type="text" placeholder="Tu apellido" name="last_name" onChange={handleChange} required disabled={isLoading} />
+                             </div>
+                         </div>
+                         <div>
+                             <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email_address">Correo</label>
+                             <input className="w-full px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" type="email" placeholder="tu@correo.com" name="email_address" onChange={handleChange} required disabled={isLoading} />
+                         </div>
+                         <div>
+                             <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">Contraseña</label>
+                             <input className="w-full px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" type="password" placeholder="********" name="password" onChange={handleChange} required disabled={isLoading} />
+                         </div>
+                         <div>
+                             <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="phone_number">Número de teléfono (Opcional)</label>
+                             <input className="w-full px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" type="tel" placeholder="555-123-4567" name="phone_number" onChange={handleChange} disabled={isLoading} />
+                         </div>
+                         <div>
+                             <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="birth_date">Fecha de nacimiento</label>
+                             <input className="w-full px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" type="date" name="birth_date" onChange={handleChange} required disabled={isLoading} />
+                         </div>
+
+                         {/* Selección de Avatar (Opcional, si lo implementas) */}
+                         {/* <div className="flex items-center gap-5 w-full"> ... </div> */}
+
+                         <button type="submit" className="w-full mt-6 px-4 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed" disabled={isLoading}>
+                             {isLoading ? 'Registrando...' : 'Crear Cuenta'}
+                         </button>
+                     </form>
+                    <p className="mt-6 text-sm text-center text-gray-600">
+                         ¿Ya tienes una cuenta?{' '}
+                         <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+                             Inicia sesión
+                         </Link>
+                     </p>
+                    <hr className="my-6 border-gray-300" />
+                    <div className="text-center">
+                         <Link href="/" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                             ← Volver al inicio
+                         </Link>
+                    </div>
+                 </div>
+             </div>
+              {/* Columna de la Imagen */}
+              <div className="hidden md:flex w-1/2 bg-gradient-to-br from-teal-400 to-blue-500 items-center justify-center p-8 order-1 md:order-2">
+                  <img
+                      src="/img/registro.png" // Asegúrate que la ruta sea correcta
+                      alt="Ilustración de Registro"
+                      className="max-w-md lg:max-w-lg object-contain"
+                  />
+              </div>
+         </main>
+    );
 }
-export default signup
+
+// export default signup // Incorrecto
+// export default SignupPage // Correcto
