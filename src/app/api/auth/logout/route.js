@@ -1,36 +1,34 @@
-import {verify} from 'jsonwebtoken';
+// Ruta: src/app/api/auth/logout/route.js
 import { serialize } from "cookie";
 import { NextResponse } from 'next/server';
 
-export function POST(req, res) {
-    // obtenemos las cookies del header
-    const cookies = req.headers.get('cookie');
-    // buscamos la cookie ScannToken con el token
-    const ScannToken = cookies?.split('; ').find(row => row.startsWith('ScannToken='))?.split('=')[1];
-
-    if (!ScannToken) { // si no hay token
-        return NextResponse.json({ message: 'No token provided' },
-            { status: 401 })
-    }
-    
+// CORRECCIÓN: Logout debe ser POST por seguridad (evita CSRF vía GET)
+export async function POST(req, res) {
     try {
-        // establecemos el token existente a null, lo eliminamos
-        verify(ScannToken, 'secretkey')
-        // creamos la cookie con el token null para cerrar sesión
-        const serialized = serialize('ScannToken', null, {
+        // Crea una cookie serializada con fecha de expiración en el pasado para borrarla
+        const serialized = serialize('ScannToken', '', { // Valor vacío
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            maxAge: 0,
-            path: '/'
-        })
-        // retornamos la cookie con el token null en el header
-        const response = NextResponse.json({ message: 'logout success' });
-        response.headers.set('Set-Cookie', serialized);
+            secure: process.env.NODE_ENV === 'production', // True en producción (HTTPS)
+            sameSite: 'strict', // Más seguro que 'lax'
+            maxAge: -1, // Expira inmediatamente
+            path: '/' // Asegura que la cookie se borre en todo el sitio
+        });
+ 
+        // Crea la respuesta y establece la cabecera para borrar la cookie
+        const response = NextResponse.json(
+            { message: 'Logout exitoso' },
+            { status: 200 } // OK
+        );
+        response.headers.set('Set-Cookie', serialized); // Envía la cookie expirada
         return response;
-    } catch (error) { // si el token es inválido
-        return NextResponse.json({ message: 'Invalid token' },
-            { status: 401 })
-    }
 
+    } catch (error) {
+        console.error("Error en logout:", error);
+        return NextResponse.json({ message: 'Error interno al cerrar sesión' }, { status: 500 });
+    }
+}
+
+// Opcional: Puedes añadir un GET que simplemente devuelva un error 405 Method Not Allowed
+export async function GET(req) {
+     return NextResponse.json({ message: 'Método no permitido. Usa POST para logout.' }, { status: 405 });
 }

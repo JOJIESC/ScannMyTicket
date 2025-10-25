@@ -5,9 +5,11 @@ export const conn = mysql({
     config: {
         host: process.env.MYSQL_HOST,
         user: process.env.MYSQL_USER,
-        password: process.env.MYSQL_PASSWORD,
-        port: 3306, // Puerto estándar de MySQL
+        password: process.env.MYSQL_PASSWORD, // Lee la contraseña correcta
+        port: 3306,
         database: process.env.MYSQL_DATABASE
     },
     // Opciones recomendadas para serverless-mysql
+    onError: (e) => { console.error("Error de conexión a la BD:", e.message); }
 });
+
