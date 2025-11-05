@@ -1,35 +1,54 @@
-import React from 'react';
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 
-interface EventCardProps {
-    title: string;
-    event_id: number;
-    start: Date;
-    end: Date;
-    startTime: string;
-    endTime: string;
-    location: string;
-    image_url: string;
-}
+type Props = {
+  id: number;
+  title: string;
+  description?: string | null;
 
-const EventCard: React.FC<EventCardProps> = ({ title, event_id, start, end,startTime,endTime,location,image_url }) => {
-    return (
-        <Link href={`./Events/${event_id}`} className="w-[30rem] flex flex-col items-center bg-customGray border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl hover:bg-gray-100">
-            <div className='flex h-full '>
-                {/*La imagen se define por el id del evento */}
-                <Image width={200} height={300} className="object-cover w-full rounded-t-lg h-full md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src={image_url} alt={title}/>
-            </div>
-            <div className="flex flex-col justify-between p-4 leading-normal">
-                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 ">{title}</h5>
-                <p className='font-normal text-gray-700'>Starts: {start.toString()}</p>
-                <p>Start time: {startTime}</p>
-                <p className='font-normal text-gray-700'>Ends at: {end.toString()}</p>
-                <p>End time: {endTime}</p>
-                <p>Location: {location}</p>
-            </div>
-        </Link>
-    );
+  // 👇 aceptar Date o string (o null)
+  start?: string | Date | null;
+  end?: string | Date | null;
+  startTime?: string | null;
+  endTime?: string | null;
+  location?: string | null;
+
+  image_url?: string | null;
 };
 
-export default EventCard;
+const PLACEHOLDER = 'https://picsum.photos/800/400?blur=3';
+
+function safeSrc(src?: string | null) {
+  if (!src || typeof src !== 'string') return PLACEHOLDER;
+  if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('/')) return src;
+  return PLACEHOLDER;
+}
+
+export default function EventCard(props: Props) {
+  const {
+    id, title, description, image_url,
+    // start, end, startTime, endTime, location // <- si luego los muestras, ya aceptan Date|string|null
+    location
+  } = props;
+
+  return (
+    <Link href={`/User/Events/${id}`} className="block border rounded-xl overflow-hidden hover:shadow-md transition">
+      <div className="relative w-full h-48">
+        <Image
+          src={safeSrc(image_url)}
+          alt={title}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover"
+          priority={false}
+        />
+      </div>
+      <div className="p-3 space-y-1">
+        <h3 className="font-semibold line-clamp-1">{title}</h3>
+        {description ? <p className="text-sm text-gray-600 line-clamp-2">{description}</p> : null}
+        {location ? <p className="text-xs text-gray-500">📍 {location}</p> : null}
+      </div>
+    </Link>
+  );
+}

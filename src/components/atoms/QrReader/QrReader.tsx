@@ -1,125 +1,93 @@
-import React, { useEffect, useState,useRef } from "react";
-import dynamic from "next/dynamic";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
+// src/components/atoms/QrReader/QrReader.tsx
+'use client';
 
-const QrScanner = dynamic(() => import("react-qr-scanner"), { ssr: false });
+import React, { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
-interface QrReaderComponentProps {
+const QrScanner = dynamic(() => import('react-qr-scanner'), { ssr: false }) as any;
+
+type Props = {
   className?: string;
-  event_id: string | string[];
+  event_id: number | string;
   operator_email: string;
-}
+};
 
-
-
-const QrReaderComponent: React.FC<QrReaderComponentProps> = ({ className,event_id,operator_email }) => {
+export default function QrReaderComponent({ className, event_id, operator_email }: Props) {
   const [scanResult, setScanResult] = useState<string | null>(null);
-  const lastScannedTimeRef = useRef<number | null>(null); // Referencia al tiempo del último escaneo
+  const busyRef = useRef(false);
 
+  // ✅ Debe ser MediaStreamConstraints, con video definido (y audio false)
+  const streamConstraints: MediaStreamConstraints = {
+    video: {
+      facingMode: { ideal: 'environment' },
+      width: { ideal: 1280 },
+      height: { ideal: 720 },
+    },
+    audio: false,
+  };
 
   const handleScan = (data: any) => {
-    if (data) {
-      const currentTime = new Date().getTime();
-      if (
-        lastScannedTimeRef.current &&
-        currentTime - lastScannedTimeRef.current < 2000
-      ) {
-        return;
-      }
-      lastScannedTimeRef.current = currentTime;
-      setScanResult(data.text);
-    }
+    if (!data || !data.text) return;
+    if (busyRef.current) return; // throttle
+    busyRef.current = true;
+    setScanResult(data.text);
   };
+
   const handleError = (err: any) => {
-    console.error(err);
+    console.error('QR error:', err);
+    // Mensajes más claros de permisos/https
+    if (typeof window !== 'undefined') {
+      const isHttps = location.protocol === 'https:' || location.hostname === 'localhost';
+      if (!isHttps) toast.error('La cámara requiere HTTPS o localhost.');
+      else toast.error('No se pudo acceder a la cámara. Revisa permisos.');
+    }
   };
 
   useEffect(() => {
-    if (scanResult) {
-      processQRCode();
-    }
-  }, [scanResult]);
+    if (!scanResult) return;
+    (async () => {
+      try {
+        const res = await axios.post('/api/operator/scan', {
+          event_id: Number(event_id),
+          operator_email,
+          qr_raw: scanResult,
+        });
 
-  const processQRCode = async () => {
-    try {
-      const parsedResult = JSON.parse(scanResult || "");
-      if (typeof parsedResult === 'object') {
-        // Si el resultado del análisis es un objeto JSON válido, continúa con la validación
-        console.log(event_id)
-        console.log(operator_email)
-        console.log(parsedResult.subscriber_id)
-        await isQRValid(parsedResult);
-      } else {
-        // Si el resultado del análisis no es un objeto JSON válido, muestra un mensaje de error
-        toast.error('El código QR no contiene un objeto JSON válido.');
-        setScanResult(null); // Reinicia el estado del resultado del escaneo
+        if (res.status === 200) {
+          toast.success('✅ Ticket validado');
+          window.dispatchEvent(
+            new CustomEvent('scan:updated', { detail: { eventId: Number(event_id) } }),
+          );
+        } else {
+          toast.error('Error inesperado al validar');
+        }
+      } catch (e: any) {
+        const msg = e?.response?.data?.message || 'Error al validar';
+        const code = e?.response?.status;
+        if (code === 409) toast.info('⚠️ Ticket repetido');
+        else if (code === 410) toast.warn('⏱️ Ticket caducado');
+        else toast.error(`❌ ${msg}`);
+      } finally {
+        setTimeout(() => {
+          busyRef.current = false;
+          setScanResult(null);
+        }, 1500);
       }
-    } catch (error) {
-      console.error('Error al procesar el código QR:', error);
-      toast.error('Error al procesar el código QR.');
-      setScanResult(null); // Reinicia el estado del resultado del escaneo
-    }
-  };
-
-  const isQRValid = async (formattedScanResult: any) => {
-    try {
-      /* La API RECIBE:
-      {
-      operator_email: email del operador,
-      subscriber_id: id del suscriptor,
-      subscibed_to: id del evento al que se suscribió
-      }
-      */
-      console.log(operator_email)
-      const subscriptions = await axios.post('/api/operator/checkSubscription', {email: operator_email, subscriber_id: formattedScanResult.subscriber_id, subscribed_to: event_id});
-      const subscriptionsData = subscriptions.data.data;
-      console.log(subscriptionsData)
-
-      // Verificamos caducidad de la suscripción
-      const expirationDate = new Date(subscriptionsData.expires_at);
-      console.log(expirationDate)
-      const currentDate = new Date();
-      if (expirationDate < currentDate) {
-        toast.error('La suscripción ha caducado');
-        console.log('La suscripción ha caducado');
-        setScanResult(null);
-        return false;
-      }
-
-      if (subscriptions.status === 200) {
-        toast.success('QR Válido');
-        // Eliminamos la subscripción ya escaneada
-        const deleteSubscription = await axios.post('/api/operator/deleteSubscription', {id: subscriptionsData.id});
-        console.log(deleteSubscription)
-        // Reiniciar el estado del resultado del escaneo después de procesar el QR
-        setScanResult(null);
-        return true;
-      } else {
-        toast.error('QR Inválido');
-        setScanResult(null);
-      }
-    } catch (error) {
-      console.error('Error al verificar el QR:', error);
-      toast.error('Error al verificar el QR');
-      setScanResult(null);
-    }
-  };
+    })();
+  }, [scanResult, event_id, operator_email]);
 
   return (
-    <div className={`qr-reader ${className}`}>
+    <div className={className}>
       <QrScanner
-        delay={500}
-        onError={handleError}
         onScan={handleScan}
-        className="qr-scanner w-full h-auto"
+        onError={handleError}
+        // ✅ PASA MediaStreamConstraints correctas
+        constraints={streamConstraints as any}
+        delay={200}
+        style={{ width: '100%' }}
       />
-      {/* {scanResult && (
-        <p>{JSON.parse(scanResult).id}</p>
-      )} */}
     </div>
   );
-};
-
-export default QrReaderComponent;
+}

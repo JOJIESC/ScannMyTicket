@@ -1,144 +1,182 @@
-'use client'
+'use client';
 
-import React from 'react'
-import Avatar from '@/components/atoms/Avatar/Avatar'
-import axios from 'axios'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { toast } from "react-toastify"
-import 'react-toastify/dist/ReactToastify.css'
-import BackButton from '@/components/atoms/BackButton/BackButton'
+import React, { useEffect, useState } from 'react';
+import Avatar from '@/components/atoms/Avatar/Avatar';
+import BackButton from '@/components/atoms/BackButton/BackButton';
+import { http } from '@/libs/http';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { useProfile } from '@/hooks/useProfile';
 
-function Account() {
-  const [user, setuser] = useState({
-    email_address: "",
-    username: "",
-    first_name: "",
-    last_name: "",
-    birth_date: "",
-    phone_number: "",
-    password: "",
-    id: "",
-    avatar: ""
+const AVATARS = [
+  "Black.png","Dark.jpg","DeepPurple.jpg","Gas.png","Japan.png",
+  "ManaPurple.jpg","OceanBlue.jpg","Purple.png","Red.jpg",
+  "RiverBlue.jpg","Temple.png","Ventura.jpg","Warm.png"
+];
+
+export default function Account() {
+  const router = useRouter();
+  const { data: profile, loading, error } = useProfile();
+
+  const [form, setForm] = useState({
+    email_address: '',
+    first_name: '',
+    last_name: '',
+    birth_date: '',
+    phone_number: '',
+    password: '', // nueva contraseña (opcional)
+    id: '',
+    avatar: 'Black.png'
   });
 
-  const getProfile = async () => {
-    const response = await axios.get('/api/auth/PROFILE')
-    setuser(response.data)
-    console.log(response)
-  }
+  useEffect(() => {
+    if (!profile) return;
+    setForm(f => ({
+      ...f,
+      email_address: profile.email_address || '',
+      first_name: profile.first_name || '',
+      last_name: profile.last_name || '',
+      birth_date: profile.birth_date || '',
+      phone_number: profile.phone_number || '',
+      id: String(profile.id || ''),
+      avatar: profile.avatar || 'Black.png',
+      password: ''
+    }));
+  }, [profile]);
 
-  //esta funcion toma los datos del usuario y setea el usuario
-  React.useEffect(() => {
-    getProfile()
-  }, [])
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
 
+  const handleAvatar = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setForm(prev => ({ ...prev, avatar: e.target.value }));
+  };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setuser({
-      ...user,
-      [event.target.name]: event.target.value
-    })
-  }
-
-  const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(event.target.value);
-    setuser({
-      ...user,
-      avatar: event.target.value
-    })
-  }
-
-  //manejar el cierre de sesion
-  const router = useRouter()
-  const logout = () => {
-    const response = axios.post('/api/auth/logout')
-    router.push('/login')
-  }
-
-  // obtenemos el perfil del usuario desde cookies y lo seteamos en el estado
-
-
-  const updateProfile = async () => {
-    const response = await axios.put('/api/users/update', user)
-    console.log(response.data)
-    if (response.status === 200) {
-      toast.success('Perfil actualizado')
-
-      // Obtén un nuevo token después de actualizar el perfil
-      const id = user.id
-      const authResponse = await axios.post('/api/users/refreshToken', id)
-      if (authResponse.status === 200) {
-        // Guarda el nuevo token en las cookies
-        toast.success('Token actualizado')
-      }
+  const logout = async () => {
+    try {
+      await http.post('/api/auth/logout');
+    } finally {
+      router.push('/login');
     }
-    // 
+  };
 
-  }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!form.id) {
+      toast.error('No hay usuario cargado');
+      return;
+    }
 
-  const Avatares = [
-    "Black.png",
-    "Dark.jpg",
-    "DeepPurple.jpg",
-    "Gas.png",
-    "Japan.png",
-    "ManaPurple.jpg",
-    "OceanBlue.jpg",
-    "Purple.png",
-    "Red.jpg",
-    "RiverBlue.jpg",
-    "Temple.png",
-    "Ventura.jpg",
-    "Warm.png"
-  ];
+    const payload: any = { id: Number(form.id) };
+
+    // Solo enviar campos necesarios
+    for (const k of ['email_address','first_name','last_name','phone_number','avatar']) {
+      if ((form as any)[k] !== undefined) payload[k] = (form as any)[k];
+    }
+    if (form.birth_date !== undefined) payload.birth_date = form.birth_date;
+    if (form.password && form.password.length >= 6) {
+      payload.password = form.password;
+    }
+
+    try {
+      const res = await http.put('/api/users/update', payload);
+      if (res.status === 200) {
+        // refrescar la cookie con los nuevos datos
+        await http.post('/api/users/refreshToken', { id: Number(form.id) });
+        toast.success('Perfil actualizado');
+      } else {
+        toast.warn('No se aplicaron cambios');
+      }
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || 'Error actualizando el perfil';
+      toast.error(msg);
+    }
+  };
+
+  if (loading) return <main className="p-6">Cargando…</main>;
+  if (error)   return <main className="p-6">Error: {error}</main>;
 
   return (
-    <div className='flex justify-around items-center h-dvh p-16'>
-      <section className='w-2/4'>
-        <BackButton />
-        <h1 className='font-bold text-5xl mb-20'>Account settings</h1>
+    <main className="flex flex-col min-h-screen w-full">
+      <BackButton />
+      <div className="max-w-3xl mx-auto p-4">
+        <h1 className="text-2xl font-semibold mb-4">Mi cuenta</h1>
 
-        <div >
-          <label className='font-bold' htmlFor="">First_name</label>
-          <div className='flex gap-4'>
-            <input onChange={handleChange} className='w-full bg-customGray h-12 rounded-md  mb-4 p-2' type="text" name="first_name" id="first_name" defaultValue={user.first_name} placeholder='first name' />
-            <input onChange={handleChange} className='w-full bg-customGray h-12 rounded-md  mb-4 p-2' type="text" name='last_name' id='last_name' defaultValue={user.last_name} placeholder='last_name' />
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium">Nombre</label>
+              <input
+                name="first_name"
+                value={form.first_name}
+                onChange={handleChange}
+                className="w-full border rounded p-2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium">Apellido</label>
+              <input
+                name="last_name"
+                value={form.last_name}
+                onChange={handleChange}
+                className="w-full border rounded p-2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium">Correo</label>
+              <input
+                type="email"
+                name="email_address"
+                value={form.email_address}
+                onChange={handleChange}
+                className="w-full border rounded p-2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium">Fecha de nacimiento</label>
+              <input
+                type="date"
+                name="birth_date"
+                value={form.birth_date || ''}
+                onChange={handleChange}
+                className="w-full border rounded p-2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium">Teléfono</label>
+              <input
+                name="phone_number"
+                value={form.phone_number}
+                onChange={handleChange}
+                className="w-full border rounded p-2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium">Nuevo password (opcional)</label>
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                className="w-full border rounded p-2"
+                placeholder="Dejar vacío para no cambiar"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium">Avatar</label>
+              <select value={form.avatar} onChange={handleAvatar} className="w-full border rounded p-2">
+                {AVATARS.map(a => <option key={a} value={a}>{a}</option>)}
+              </select>
+            </div>
           </div>
-        </div>
-        <label className='font-bold' htmlFor="email_address">Email</label>
-        <input onChange={handleChange} className='w-full bg-customGray h-12 rounded-md  mb-4 p-2' type="email" name="email_address" id="email_address" defaultValue={user.email_address} />
-        <label className='font-bold' htmlFor="Password">Password</label>
-        <input onChange={handleChange} className='w-full bg-customGray h-12 rounded-md  mb-4 p-2' type="text" name="Password" id="Password" defaultValue={user.password} />
-        <label className='font-bold' htmlFor="BirthDate">Birth date</label>
-        <input onChange={handleChange} className='w-full bg-customGray h-12 rounded-md cursor-not-allowed  mb-4 p-2' type="text" name='BirthDate' id='BirthDate' value={user.birth_date} disabled={true} />
-        {/* Seleccion de avatar */}
-        <div className="flex justify-around items-center gap-5 w-full mb-7">
-          <div className="w-full">
-            <label htmlFor="countries" className="block mb-2 text-sm font-medium text-gray-900">Selecciona un avatar: </label>
-            <select onChange={handleSelect} id="countries" className="bg-customGray border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required>
-            <option defaultValue={user.avatar}>{user.avatar}</option>
-              {Avatares.map((avatar, index) => {
-                return <option key={index} value={avatar}>{avatar}</option>
-              })}
-            </select>
+
+          <div className="flex gap-3">
+            <button type="submit" className="px-4 py-2 rounded bg-black text-white">Guardar cambios</button>
+            <button type="button" onClick={logout} className="px-4 py-2 rounded border">Cerrar sesión</button>
           </div>
-          <Avatar width={100} avatarOption={user.avatar} />
-        </div>
-      </section>
-      <section className='flex flex-col justify-around'>
-        <Avatar avatarOption={user.avatar} width={350} />
-        <button onClick={updateProfile} className="flex mt-8 justify-center bg-customGreen rounded text-black font-bold p-2 w-full hover:bg-customGreen
-          transition ease-in-out delay-100hover:-translate-y-1 hover:scale-110 duration-300">Guardar cambios</button>
-        <button onClick={() => logout()} className=' text-red-600 font-bold px-4 py-2 rounded-lg flex items-center justify-center gap-2 mt-5'>
-          Cerrar Sesión
-          <span className="material-symbols-outlined">
-            logout
-          </span>
-        </button>
-      </section>
-    </div>
-  )
+        </form>
+      </div>
+    </main>
+  );
 }
-
-export default Account

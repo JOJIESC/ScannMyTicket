@@ -1,25 +1,25 @@
 // Ruta: src/app/api/auth/logout/route.js
-import { serialize } from "cookie";
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 
-// CORRECCIÓN: Logout debe ser POST por seguridad (evita CSRF vía GET)
+// Usar POST es más seguro para cerrar sesión
 export async function POST(req, res) {
     try {
-        // Crea una cookie serializada con fecha de expiración en el pasado para borrarla
-        const serialized = serialize('ScannToken', '', { // Valor vacío
+        const cookieStore = cookies();
+        
+        // Borra la cookie estableciendo su edad máxima a -1
+        cookieStore.set('ScannToken', '', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // True en producción (HTTPS)
-            sameSite: 'strict', // Más seguro que 'lax'
+            secure: process.env.NODE_ENV === 'production', 
+            sameSite: 'strict', 
             maxAge: -1, // Expira inmediatamente
-            path: '/' // Asegura que la cookie se borre en todo el sitio
+            path: '/' 
         });
  
-        // Crea la respuesta y establece la cabecera para borrar la cookie
         const response = NextResponse.json(
             { message: 'Logout exitoso' },
-            { status: 200 } // OK
+            { status: 200 }
         );
-        response.headers.set('Set-Cookie', serialized); // Envía la cookie expirada
         return response;
 
     } catch (error) {
@@ -28,7 +28,7 @@ export async function POST(req, res) {
     }
 }
 
-// Opcional: Puedes añadir un GET que simplemente devuelva un error 405 Method Not Allowed
+// Añadimos GET para evitar errores si se llama accidentalmente
 export async function GET(req) {
      return NextResponse.json({ message: 'Método no permitido. Usa POST para logout.' }, { status: 405 });
 }

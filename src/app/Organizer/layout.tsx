@@ -1,19 +1,10 @@
-import React from 'react'
 import SideBarOrganizer from '@/components/molecules/SideBarOrganizer/SideBarOrganizer';
 
-function LayoutOrganizer({
-    children,
-  }: Readonly<{
-    children: React.ReactNode;
-  }>) {
+export default function OrganizerLayout({ children }: { children: React.ReactNode }) {
   return (
-    <main className='flex'>
+    <div className="flex">
       <SideBarOrganizer />
-      <div className='w-full h-full p-5'>
-      {children}
-      </div>
-    </main>
-  )
+      <section className="flex-1 p-6">{children}</section>
+    </div>
+  );
 }
-
-export default LayoutOrganizer

@@ -1,88 +1,67 @@
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-// Asegúrate de usar la misma clave secreta que en el login/registro
+// Usa la misma clave que en login/PROFILE
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secretkey_muy_insegura');
 
+// Rutas públicas base
+const PUBLIC_BASE_PATHS = ['/login', '/signup', '/LoginOperator', '/Unaunthorized', '/'];
+
+function isPublic(pathname) {
+  // Normaliza: quita slash final excepto root
+  const p = pathname !== '/' && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+  return PUBLIC_BASE_PATHS.some(base => p === base || p.startsWith(base + '/'));
+}
+
 export async function middleware(req) {
-    const { pathname } = req.nextUrl; // Obtiene la ruta solicitada
+  const { pathname } = req.nextUrl;
 
-    // Rutas públicas que no requieren autenticación
-    const publicPaths = ['/login', '/signup', '/LoginOperator', '/Unaunthorized', '/']; 
-    // Evita aplicar el middleware a las rutas de API y archivos estáticos
-    if (pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname.startsWith('/img') || pathname.endsWith('.ico')) {
-        return NextResponse.next();
+  // Evitar aplicar a API y estáticos
+  if (
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/img') ||
+    pathname.endsWith('.ico')
+  ) {
+    return NextResponse.next();
+  }
+
+  // Permitir rutas públicas (incluye `/signup` y subrutas)
+  if (isPublic(pathname)) return NextResponse.next();
+
+  // Desde aquí, requiere token
+  const token = req.cookies.get('ScannToken')?.value;
+  if (!token) return NextResponse.redirect(new URL('/login', req.url));
+
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    if (!payload.user?.role) throw new Error('Token inválido');
+
+    const userRole = String(payload.user.role).toUpperCase();
+    const pathRoot = pathname.split('/')[1]?.toLowerCase();
+
+    // Autorización por rol / área
+    if (pathRoot === 'admin' && userRole !== 'ADMIN') {
+      return NextResponse.redirect(new URL('/Unaunthorized', req.url));
     }
-    // Si es una ruta pública, permite el acceso sin verificar token
-    if (publicPaths.includes(pathname)) {
-         return NextResponse.next();
+    if (pathRoot === 'operator' && userRole !== 'OPERATOR') {
+      return NextResponse.redirect(new URL('/Unaunthorized', req.url));
+    }
+    if (pathRoot === 'user' && userRole !== 'USER' && userRole !== 'ADMIN') {
+      return NextResponse.redirect(new URL('/Unaunthorized', req.url));
     }
 
-
-    // Intenta obtener el token de las cookies
-    const tokenCookie = req.cookies.get('ScannToken');
-    const token = tokenCookie?.value;
-
-    // Si no hay token Y NO es una ruta pública, redirige a login
-    if (!token) {
-        console.log("Middleware: No hay token, redirigiendo a login desde", pathname);
-        return NextResponse.redirect(new URL('/login', req.url));
-    }
-
-    // Si hay token, intenta verificarlo
-    try {
-        const { payload } = await jwtVerify(token, JWT_SECRET);
-        
-        // Asegúrate de que el payload tiene la estructura esperada
-        if (!payload.user || !payload.user.role) {
-             throw new Error("Token inválido - falta payload.user o payload.user.role");
-        }
-
-        const userRole = payload.user.role.toUpperCase(); // Asegura que el rol esté en mayúsculas
-
-        // Definir rutas permitidas (usa startsWith para cubrir subrutas)
-        const rolePermissions = {
-            USER: ['/User', '/Organizer'], // Permite acceso a /User y /Organizer
-            ADMIN: ['/Admin', '/User', '/Organizer', '/Operator'],
-            ORGANIZER: ['/Organizer', '/User'],
-            OPERATOR: ['/Operator']
-        };
-
-        const allowedPaths = rolePermissions[userRole] || [];
-        
-        // Verificar si la ruta solicitada comienza con alguna de las permitidas
-        const isPathAllowed = allowedPaths.some(path => pathname.startsWith(path));
-
-        if (!isPathAllowed) {
-            console.log(`Middleware: Rol ${userRole} no tiene permiso para ${pathname}, redirigiendo a /Unaunthorized`);
-            return NextResponse.redirect(new URL('/Unaunthorized', req.url));
-        }
-
-        // Si tiene permiso, permite continuar
-        console.log(`Middleware: Rol ${userRole} tiene permiso para ${pathname}`);
-        return NextResponse.next();
-
-    } catch (error) {
-        // Si el token es inválido (expirado, malformado, clave incorrecta)
-        console.error("Middleware: Error verificando token -", error.message);
-        const response = NextResponse.redirect(new URL('/login', req.url));
-        // Borra la cookie inválida
-        response.cookies.delete('ScannToken'); 
-        return response;
-    }
+    return NextResponse.next();
+  } catch (err) {
+    console.error('Error verificando token en middleware:', err?.message || err);
+    const response = NextResponse.redirect(new URL('/login', req.url));
+    // Borra cookie inválida
+    response.cookies.delete('ScannToken');
+    return response;
+  }
 }
 
-// Configuración del Matcher: Aplica a todas las rutas excepto las especificadas
+// Configuración del Matcher
 export const config = {
-  matcher: [
-    /*
-     * Coincide con todas las rutas excepto:
-     * - api (rutas API)
-     * - _next/static (archivos estáticos)
-     * - _next/image (optimización de imágenes)
-     * - favicon.ico (ícono de la pestaña)
-     * - Archivos dentro de /public (imágenes, etc.) que contengan un punto (ej. .png)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico|img/.*\\.).*)',
-  ]
-}
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|img/.*\\.).*)'],
+};

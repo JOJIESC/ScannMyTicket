@@ -1,44 +1,42 @@
-import { NextRequest, NextResponse } from "next/server";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { conn } from "@/libs/mysql";
+// src/app/api/subscriptions/route.ts
+import { NextResponse } from 'next/server';
+import { conn } from '@/libs/mysql';
+import { cookies } from 'next/headers';
+import { jwtVerify } from 'jose';
 
-interface DecodedToken extends JwtPayload {
-  id: number;
-}
+const JWT_SECRET = process.env.JWT_SECRET!;
+const secret = new TextEncoder().encode(JWT_SECRET);
 
-export async function GET(req: NextRequest) {
-  const token = req.cookies.get("ScannToken")?.value;
-  if (!token) {
-    return NextResponse.json({ message: "No token provided" }, { status: 401 });
-  }
-
+export async function GET() {
   try {
-    const decoded = jwt.verify(token, "secretkey") as DecodedToken;
+    const token = cookies().get('ScannToken')?.value;
+    if (!token) return NextResponse.json([], { status: 200 });
+    const { payload } = await jwtVerify(token, secret);
 
-    if (typeof decoded === "string" || !decoded.id) {
-      return NextResponse.json({ message: "Invalid token" }, { status: 401 });
-    }
+    // token de usuario: payload.user.id; (fallback a id simple si hiciste login antiguo)
+    const userId =
+      (payload as any)?.user?.id ??
+      (payload as any)?.id ??
+      null;
 
-    const userId = decoded.id;
+    if (!userId) return NextResponse.json([], { status: 200 });
 
-    const query = `
-      SELECT e.id, e.title, e.description, e.start, e.end, e.image_url
-      FROM events e
-      JOIN subscriptions s ON s.subscribed_to = e.id
+    const rows: any[] = await conn.query(
+      `
+      SELECT 
+        e.id, e.title, e.description, e.image_url, e.location,
+        e.start, e.end,
+        s.used_at
+      FROM subscriptions s
+      JOIN events e ON e.id = s.subscribed_to
       WHERE s.subscriber_id = ?
-    `;
-    const events = await conn.query(query, [userId]);
-
-    await conn.end();
-
-    console.log("Events:", events); 
-    return NextResponse.json(events);
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 }
+      ORDER BY e.start DESC
+      `,
+      [userId]
     );
+
+    return NextResponse.json(Array.isArray(rows) ? rows : [], { status: 200 });
+  } catch {
+    return NextResponse.json([], { status: 200 });
   }
 }
-
